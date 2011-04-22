@@ -1,0 +1,91 @@
+body
+{
+    font-family:Arial;
+}
+.header
+{
+    background-color: #274492;
+    background-image: url('../images/header.jpg');
+    background-position: right;
+    background-repeat: no-repeat;
+    color: White;
+    font-size: larger;
+    font-weight: bold;
+    height: 110px;
+    text-align: left;
+}
+.siteName
+{
+    text-align: center;
+    width: 150px;
+    vertical-align: middle;
+}
+.title
+{
+    font-size: x-large;
+    font-weight: bold;
+    color: #006666;
+    text-align: center;
+}
+.table
+{
+    border: thin solid #3333CC;
+    padding: 0px;
+    margin: 0px;
+    font-size: small;
+    border-collapse: collapse;
+    border-spacing: 0px;
+}
+.key
+{
+    width: 30%;
+    font-weight: bold;
+    text-align: left;
+}
+.value
+{
+    width: 70%;
+    text-align:center;
+}
+.tableHeader
+{
+    border: thin solid #3333CC;
+    border-bottom: thin solid #3333CC;
+    font-weight: bolder;
+    color: #006666;
+    text-align: center;
+}
+.menuTitle
+{
+    font-size: small;
+    font-weight: bolder;
+    color: #006666;
+    text-align: center;
+}
+.error
+{
+    font-size: smaller;
+    color: red;
+}
+.body
+{
+    height: 400px;
+}
+.menu
+{
+    border-right-color: #3333CC;
+    border-right-style: solid;
+    border-right-width: thin;
+    font-size: small;
+    vertical-align: top;
+    width: 15%;
+}
+.footer
+{
+    background-color: #274492;
+    color: White;
+    font-size: small;
+    height: 30px;
+    text-align: center;
+    vertical-align: middle;
+}
