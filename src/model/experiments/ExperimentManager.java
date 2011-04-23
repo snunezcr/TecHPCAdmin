@@ -21,6 +21,7 @@ import model.ExperimentExecution;
 import model.ExperimentParameter;
 import model.UserExperimentMapping;
 import controller.Constants;
+import files.LinuxUtilities;
 
 /**
  * This class is responsible for all tasks related to experiments, such as creating new ones,
@@ -143,12 +144,15 @@ public class ExperimentManager implements Observer
                     String targetPath = dirManager.
                             GetPathForExperimentExecution(userId, experimentId) + experimentPath;
                     result = ioManager.CopyFile(originalPath, targetPath);
+                    ServiceResult<Boolean> permissionsResult = LinuxUtilities.GetInstance().
+                            SetFilePermissions(targetPath, LinuxUtilities.Execution);
+                    result &= permissionsResult.getStatus() != ServiceResult.OperationResult.Error;
                 }
                 //Let's check if there was some error
                 if(!result)
                 {
                     cleanExperiment(experimentId);
-                    Exception ex = new IOException("Couldn't create the file");
+                    Exception ex = new IOException("Couldn't create the file or set permissions.");
                     return CommonFunctions.CreateErrorServiceResult(ex);
                 }
             }
