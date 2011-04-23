@@ -4,6 +4,8 @@
     Author     : rdinarte
 --%>
 
+<%@page import="java.util.Collection"%>
+<%@page import="java.util.HashMap"%>
 <%@page import="common.CommonFunctions"%>
 <%@page import="model.ExperimentParameter"%>
 <%@page import="common.ServiceResult"%>
@@ -43,12 +45,12 @@
             nodeSelection+= String.format("<option value='%1$d' selected>%1$d</option>", nodes);
 
     //Get this user's applications
-    ServiceResult<Application[]> applicationsResult = agent.GetUsersApplications(request);
+    ServiceResult<HashMap<Integer, Application>> applicationsResult = agent.GetUsersApplications(request);
     if(applicationsResult.getStatus() == ServiceResult.OperationResult.Error
-            || applicationsResult.getValue().length == 0)
+            || applicationsResult.getValue().values().size() == 0)
     {
         //An error occurred so report it to the user and disable the controls
-        if(applicationsResult.getValue().length == 0)
+        if(applicationsResult.getValue().values().size() == 0)
             errorMessage = Constants.ZeroApplicationsErrorMessage;
         else
             errorMessage = Constants.GetApplicationsErrorMessage;
@@ -56,7 +58,7 @@
     }
     else
     {
-        Application[] applications = applicationsResult.getValue();
+        Collection<Application> applications = applicationsResult.getValue().values();
         for(Application app : applications)
             applicationOptions += String.format("<option value='%1$s'>%1$s</option>",
                                                 app.getRelativePath());

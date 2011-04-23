@@ -41,7 +41,7 @@
         }
     }
 
-    //En caso de que hubiera un error al crear un nuevo experimento, que redirige a esta pagina
+    //Let's check if there was an error while creating a new experiment
     errorMessage += RequestManager.GetError(request);
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"

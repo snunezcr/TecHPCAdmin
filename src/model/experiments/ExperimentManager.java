@@ -103,8 +103,8 @@ public class ExperimentManager implements Observer
      * @param experiment The experiment that will be created
      * @return A structure to indicate if the creation was successful
      */
-    public ServiceResult<Integer> CreateExperiment(final int userId, final ExperimentBase experiment,
-            final byte[] inputFile)
+    public ServiceResult<Integer> CreateExperiment(final int userId,
+            final ExperimentBase experiment, final byte[] inputFile)
     {
         try
         {//NOTE: If the creation of the directory structure or uploading the file fails, we should

@@ -9,9 +9,9 @@ import db.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashMap;
 import model.Application;
+import model.ApplicationBase;
 
 /**
  * This class do all the database operations related to applications, it's an auxiliar class to
@@ -41,13 +41,13 @@ public class ApplicationDataManager {
      * @return A list with all the user applications
      * @throws SQLException if the stored procedure couldn't be executed
      */
-    public Application[] GetUsersApplications(final int userId) throws SQLException
+    public HashMap<Integer, Application> GetUsersApplications(final int userId) throws SQLException
     {
         SqlParameter[] parameters = new SqlParameter[]{
             new SqlParameter(Constants.UserAppsParamUserId, userId),
         };
         ResultSet reader = dataHelper.ExecuteSP(Constants.UserAppsSp, parameters);
-        List<Application> result = new LinkedList<Application>();
+        HashMap<Integer, Application> result = new HashMap<Integer, Application>();
         while(reader.next())
         {
             int id = reader.getInt(Constants.UserAppsColId);
@@ -55,10 +55,31 @@ public class ApplicationDataManager {
             String relativePath = reader.getString(Constants.UserAppsColRelativePath);
             Date updateDate = reader.getDate(Constants.UserAppsColUpdateDate);
             Application application = new Application(id, description, relativePath, updateDate);
-            result.add(application);
+            result.put(id, application);
         }
         dataHelper.CloseConnection(reader);
-        return result.toArray(new Application[result.size()]);
+        return result;
+    }
+
+    /**
+     * Saves the application's metadata to the database
+     * @param application The applications metadata
+     * @param ownerId The user that is uploading the application
+     * @throws SQLException if the stored procedure couldn't be executed
+     */
+    public int CreateProgram(final ApplicationBase application, final int ownerId)
+            throws SQLException
+    {
+        SqlParameter[] parameters = new SqlParameter[]{
+            new SqlParameter(Constants.NewProgramParamDescription, application.getDescription()),
+            new SqlParameter(Constants.NewProgramParamRelativePath, application.getRelativePath()),
+            new SqlParameter(Constants.NewProgramParamOwnerId, ownerId)
+        };
+        ResultSet reader = dataHelper.ExecuteSP(Constants.NewProgramSp, parameters);
+        reader.next();
+        int result = reader.getInt(Constants.NewProgramColId);
+        dataHelper.CloseConnection(reader);
+        return result;
     }
 
 }

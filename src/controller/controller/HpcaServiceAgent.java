@@ -11,9 +11,11 @@ import common.CommonManager;
 import common.ServiceResult;
 import config.ConfigurationManager;
 import experiments.ExperimentManager;
+import files.DirectoryManager;
 import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import model.Application;
+import model.ApplicationBase;
 import model.Experiment;
 import model.ExperimentBase;
 import security.SecurityManager;
@@ -56,16 +58,49 @@ public class HpcaServiceAgent {
         return result;
     }
 
+    /**
+     * Gets the path in which applications are stored for the current user
+     * @param request The request of the page that is invoking this function
+     * @return the path in which applications are stored for the current user
+     */
+    public String GetApplicationsPath(final HttpServletRequest request)
+    {
+        int userId = SessionManager.GetUserId(request);
+        return DirectoryManager.GetInstance().GetApplicationsPath(userId);
+    }
+
     // Application methods
     // -------------------------------------------------------------------------
     /**
      * Retrieves all the applications that were uploaded by the current user
      * @return A list with all the user applications
      */
-    public ServiceResult<Application[]> GetUsersApplications(final HttpServletRequest request)
+    public ServiceResult<HashMap<Integer, Application>> GetUsersApplications(
+            final HttpServletRequest request)
+    {
+        ServiceResult<HashMap<Integer, Application>> result =
+                SessionManager.GetApplications(request);
+        if(result == null)
+        {
+            int userId = SessionManager.GetUserId(request);
+            result = ApplicationManager.GetInstance().GetUsersApplications(userId);
+            SessionManager.SetApplications(request, result);
+        }
+        return result;
+    }
+
+    /**
+     * Uploads a program an stores its metadata
+     * @param request
+     * @param application The application's metadata
+     * @param inputFile The program that is being uploaded
+     * @return A value indicating whether the operation was successful or not
+     */
+    public ServiceResult<Integer> CreateProgram(final HttpServletRequest request,
+            final ApplicationBase application, final byte[] inputFile)
     {
         int userId = SessionManager.GetUserId(request);
-        return ApplicationManager.GetInstance().GetUsersApplications(userId);
+        return ApplicationManager.GetInstance().CreateProgram(application, userId, inputFile);
     }
 
     // Experiment methods

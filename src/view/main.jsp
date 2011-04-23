@@ -53,7 +53,7 @@
                     </ul>
                 </td>
                 <td valign="top">
-                    <iframe width="100%" class="body" src="normal/new-experiment.jsp" id="displayFrame" frameborder="0"></iframe>
+                    <iframe width="100%" class="body" src="normal/my-experiments.jsp" id="displayFrame" frameborder="0"></iframe>
                 </td>
             </tr>
             <tr class="footer">

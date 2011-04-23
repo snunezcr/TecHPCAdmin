@@ -50,13 +50,16 @@ public class Constants {
             + "<br />Por favor contacte al administrador del sistema.";
 
     public static final String NewExperimentIncompleteInfoErrorMessage = "Debe completar el nombre "
-            + "y descripción del experimento";
+            + "y descripción del experimento.";
+
+    public static final String UploadProgramaIncompleteInfoErrorMessage = "Debe completar todos los"
+            + " datos antes de subir el programa.";
 
     public static final String IncompleteParallelInfoErrorMessage = "Si escoge ejecución paralela "
-            + "debe completar el directorio compartido de trabajo y el middleware";
+            + "debe completar el directorio compartido de trabajo y el middleware.";
 
     public static final String IncompleteParamErrorMessage = "Debe completar todos los datos del "
-            + "parámetro";
+            + "parámetro.";
 
     /**
      * Error message reported to the user when an unexpected error occurs while

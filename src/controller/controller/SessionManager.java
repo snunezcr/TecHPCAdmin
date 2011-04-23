@@ -9,6 +9,7 @@ import common.ServiceResult;
 import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import model.Application;
 import model.Experiment;
 
 /**
@@ -19,6 +20,7 @@ public class SessionManager {
 
     private static final String UserId = "UserId";
     private static final String ExperimentHash = "ExperimentHash";
+    private static final String ApplicationsHash = "ApplicationsHash";
     private static final String ParamTypes = "ParameterTypes";
 
     public static void Login(final HttpServletRequest request, final int userId)
@@ -37,6 +39,19 @@ public class SessionManager {
         return (Integer)request.getSession().getAttribute(UserId);
     }
 
+    public static ServiceResult<HashMap<Integer, Application>> GetApplications
+            (final HttpServletRequest request)
+    {
+        return (ServiceResult<HashMap<Integer, Application>>)request.getSession().
+                getAttribute(ApplicationsHash);
+    }
+
+    public static void SetApplications(final HttpServletRequest request,
+            final ServiceResult<HashMap<Integer, Application>> applications)
+    {
+        request.getSession().setAttribute(ApplicationsHash, applications);
+    }
+
     public static ServiceResult<HashMap<Integer,Experiment>> GetExperiments
             (final HttpServletRequest request)
     {
@@ -44,8 +59,7 @@ public class SessionManager {
                 getAttribute(ExperimentHash);
     }
 
-    public static void SetExperiments
-            (final HttpServletRequest request,
+    public static void SetExperiments(final HttpServletRequest request,
             final ServiceResult<HashMap<Integer,Experiment>> experiments)
     {
         request.getSession().setAttribute(ExperimentHash, experiments);

@@ -23,7 +23,8 @@ public class RequestManager {
     {
         InvalidCredentials,
         LoginServerError,
-        ExperimentCreationError
+        ExperimentCreationError,
+        ProgramCreationError
     }
 
     // Page names
@@ -38,6 +39,8 @@ public class RequestManager {
     private static final String MainMenuPage = "/Hpca/main.jsp";
 
     public static final String MyExperimentsPage = "/Hpca/normal/my-experiments.jsp";
+
+    public static final String MyProgramsPage = "/Hpca/normal/my-programs.jsp";
 
     // Request parameters
     // -------------------------------------------------------------------------
@@ -101,6 +104,12 @@ public class RequestManager {
             final HttpServletResponse response) throws ServletException, IOException
     {
         sendError(request, response, MyExperimentsPage, ErrorCodes.ExperimentCreationError);
+    }
+
+    public static void SendProgramCreationError(final HttpServletRequest request,
+            final HttpServletResponse response) throws ServletException, IOException
+    {
+        sendError(request, response, MyProgramsPage, ErrorCodes.ProgramCreationError);
     }
 
     public static void SendInvalidCredentialsError(final HttpServletRequest request,

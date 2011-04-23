@@ -34,6 +34,14 @@ public class Constants {
     public static final String UserAppsColUpdateDate = "UpdateDate";
     public static final String UserAppsColRelativePath = "RelativePath";
 
+    // Create new program
+    // -------------------------------------------------------------------------
+    public static final String NewProgramSp = "CreateProgram";
+    public static final int NewProgramParamDescription = 1;
+    public static final int NewProgramParamRelativePath = 2;
+    public static final int NewProgramParamOwnerId = 3;
+    public static final int NewProgramColId = 1;
+
     // Get parameter types
     // -------------------------------------------------------------------------
     public static final String ParamTypesSp = "GetParameterTypes";
