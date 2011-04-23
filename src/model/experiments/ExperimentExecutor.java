@@ -64,7 +64,7 @@ public class ExperimentExecutor
         {
             // Address of the executable file of the experiment.
             String execAddr = DirectoryManager.GetInstance().
-                              GetPathForExperiment(userId, executedExperiment.getId()) +
+                              GetPathForExperimentExecution(userId, executedExperiment.getId()) +
                               executedExperiment.getExecutablePath() +
                               " " + executedExperiment.getInputParametersLine();
             experimentProcess = Runtime.getRuntime().exec(execAddr);

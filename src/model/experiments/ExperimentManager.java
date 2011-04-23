@@ -130,7 +130,7 @@ public class ExperimentManager implements Observer
             {
                 String inputFileName = experiment.getInputFilePath();
                 //Now let's upload the file
-                String path = dirManager.GetPathForExperiment(userId, experimentId);
+                String path = dirManager.GetPathForExperimentExecution(userId, experimentId);
                 FileIOManager ioManager = FileIOManager.GetInstance();
                 boolean result = inputFile.length == 0 ||
                         ioManager.CreateNewFile(inputFile, path, inputFileName, true);
@@ -140,8 +140,8 @@ public class ExperimentManager implements Observer
                     String experimentPath = experiment.getExecutablePath();
                     String originalPath = dirManager.GetApplicationsPath(userId) +
                             experimentPath;
-                    String targetPath = dirManager.GetPathForExperiment(userId, experimentId) +
-                            experimentPath;
+                    String targetPath = dirManager.
+                            GetPathForExperimentExecution(userId, experimentId) + experimentPath;
                     result = ioManager.CopyFile(originalPath, targetPath);
                 }
                 //Let's check if there was some error

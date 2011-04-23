@@ -46,7 +46,12 @@ public class DirectoryManager {
 
     public String GetPathForExperiment(final int userId, final int experimentId)
     {
-        return GetApplicationsPath(userId) + Integer.toString(experimentId) + "/";
+        return GetPathForUser(userId) + "experiments/" + Integer.toString(experimentId) + "/";
+    }
+
+    public String GetPathForExperimentExecution(final int userId, final int experimentId)
+    {
+        return GetPathForUser(userId) + "experiments/" + Integer.toString(experimentId) + "/bin/";
     }
 
     public String GetApplicationsPath(final int userId)
@@ -59,12 +64,10 @@ public class DirectoryManager {
     {
         try
         {
-            String base = GetPathForUser(userId);
-            String experimentPath = Integer.toString(experimentId) + "/";
-            boolean success = CreateDirectory(base + "data/" + experimentPath)
-                              && CreateDirectory(base + "bin/" + experimentPath)
-                              && CreateDirectory(base + "log/" + experimentPath)
-                              && CreateDirectory(base + "stats/" + experimentPath);
+            String base = GetPathForExperiment(userId, experimentId);
+            boolean success = CreateDirectory(base + "bin")
+                              && CreateDirectory(base + "log")
+                              && CreateDirectory(base + "stats");
             return new ServiceResult<Boolean>(success);
         }
         catch(Exception ex)
@@ -77,6 +80,5 @@ public class DirectoryManager {
     {
         return new File(path).mkdirs();
     }
-
 
 }

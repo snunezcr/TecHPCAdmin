@@ -81,7 +81,7 @@ public class ExperimentDataManager {
             String inputLineParams = reader.getString(Constants.UserExpColInputLine);
             String inputFilePath = reader.getString(Constants.UserExpColInFilePath);
             Date creationDate = reader.getDate(Constants.UserExpColCreationDate);
-            String baseAddress = DirectoryManager.GetInstance().GetPathForUser(userId);
+            String baseAddress = DirectoryManager.GetInstance().GetPathForExperiment(userId, id);
             File experimentDir = new File(baseAddress);
 
             Experiment exp = new Experiment
