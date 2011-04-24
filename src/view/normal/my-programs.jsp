@@ -46,7 +46,7 @@
         <link href="../styles/HpcStyles.css" rel="Stylesheet" type="text/css" />
     </head>
     <body>
-        <p><font color="red"><%= errorMessage %></font></p>
+        <label class="error"><%= errorMessage %></label>
         <div class="title">Mis ejecutables</div>
         <table width="100%" class="table" border="1">
             <tr class="tableHeader">
