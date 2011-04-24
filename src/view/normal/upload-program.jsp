@@ -61,7 +61,7 @@
                     </tr>
                     <tr>
                         <td align="right" colspan="2">
-                            <button onclick="window.location='my-programs.jsp'">Cancelar</button>
+                            <input type="button" onclick="window.location='my-programs.jsp'" value="Cancelar" />
                             &nbsp;
                             <input type="submit" onclick="if (!validateForm()) return false;" value="Guardar" >
                         </td>

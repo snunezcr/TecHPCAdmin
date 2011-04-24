@@ -17,7 +17,7 @@
     if(!RequestManager.VerifyLogin(request, response)) return;
     //Variables
     HpcaServiceAgent agent = new HpcaServiceAgent();
-    String parallelEnabled = "disabled='disabled'";
+    String parallelEnabled = Constants.DisabledControl;
     String errorMessage = "";
     String enabled = "";
     String applicationOptions = "";
@@ -320,7 +320,7 @@
                 <tr><td colspan="2" /></tr>
                 <tr>
                     <td align="right" colspan="2">
-                        <button onclick="window.location='my-experiments.jsp'">Cancelar</button>
+                        <input type="button" onclick="window.location='my-experiments.jsp'" value="Cancelar" />
                         &nbsp;
                         <input type="submit" onclick="if (!validateForm()) return false; setAction('save');" <%= enabled %> value="Guardar" >
                     </td>
