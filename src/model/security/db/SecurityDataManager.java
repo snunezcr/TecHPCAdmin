@@ -7,6 +7,7 @@ package security.db;
 
 import db.*;
 import java.sql.ResultSet;
+import model.UserBase;
 
 /**
  * This class do all the database operations related to security, it's an auxiliar class to
@@ -35,16 +36,23 @@ public class SecurityDataManager {
      * @return The id of the logged user
      * @throws java.sql.SQLException if the stored procedure couldn't be executed
      */
-    public Integer Login(String userName, String password) throws java.sql.SQLException
+    public UserBase Login(String userName, String password) throws java.sql.SQLException
     {
         SqlParameter[] parameters = new SqlParameter[]{
             new SqlParameter(Constants.LoginParamUserName, userName),
             new SqlParameter(Constants.LoginParamPassword, password)
         };
         ResultSet reader = dataHelper.ExecuteSP(Constants.LoginSp, parameters);
-        Integer result = -1;
+        UserBase result = null;
         if(reader.next())
-            result = reader.getInt(Constants.LoginColResult);
+        {
+            int id = reader.getInt(Constants.LoginColId);
+            String name = reader.getString(Constants.LoginColName);
+            String lastName1 = reader.getString(Constants.LoginColLastName1);
+            String lastName2 = reader.getString(Constants.LoginColLastName2);
+            String role = reader.getString(Constants.LoginColRole);
+            result = new UserBase(id, userName, name, lastName1, lastName2, role);
+        }
         dataHelper.CloseConnection(reader);
         return result;
     }

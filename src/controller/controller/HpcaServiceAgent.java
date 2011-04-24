@@ -18,6 +18,7 @@ import model.Application;
 import model.ApplicationBase;
 import model.Experiment;
 import model.ExperimentBase;
+import model.UserBase;
 import security.SecurityManager;
 
 /**
@@ -40,7 +41,7 @@ public class HpcaServiceAgent {
      * @param password The password to validate
      * @return A value indicating if the credentials were valid
      */
-    public ServiceResult<Integer> Login(final String userName, final String password)
+    public ServiceResult<UserBase> Login(final String userName, final String password)
     {
         return SecurityManager.GetInstance().Login(userName, password);
     }

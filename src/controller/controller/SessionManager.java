@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import model.Application;
 import model.Experiment;
+import model.UserBase;
 
 /**
  * Manages all the information stored in the session object
@@ -19,14 +20,16 @@ import model.Experiment;
 public class SessionManager {
 
     private static final String UserId = "UserId";
+    private static final String UserRole = "UserRole";
     private static final String ExperimentHash = "ExperimentHash";
     private static final String ApplicationsHash = "ApplicationsHash";
     private static final String ParamTypes = "ParameterTypes";
 
-    public static void Login(final HttpServletRequest request, final int userId)
+    public static void Login(final HttpServletRequest request, final UserBase user)
     {
         HttpSession session = request.getSession();
-        session.setAttribute(UserId, userId);
+        session.setAttribute(UserId, user.getUserId());
+        session.setAttribute(UserRole, user.getType());
     }
 
     public static boolean IsLoggedIn(final HttpServletRequest request)
@@ -37,6 +40,11 @@ public class SessionManager {
     public static Integer GetUserId(final HttpServletRequest request)
     {
         return (Integer)request.getSession().getAttribute(UserId);
+    }
+
+    public static String GetUserRole(final HttpServletRequest request)
+    {
+        return (String)request.getSession().getAttribute(UserRole);
     }
 
     public static ServiceResult<HashMap<Integer, Application>> GetApplications

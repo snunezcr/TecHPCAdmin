@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 import controller.HpcaServiceAgent;
 import controller.RequestManager;
+import model.UserBase;
 
 /**
  * This is the controller for the login web page
@@ -34,10 +35,10 @@ public class srvLogin extends HttpServlet {
         //Extract the information from the webform
         String userName = request.getParameter("txtUserName");
         String password = request.getParameter("txtPassword");
-        ServiceResult<Integer> result = agent.Login(userName, password);
-        if(result.getStatus() == ServiceResult.OperationResult.Succeeded)
+        ServiceResult<UserBase> result = agent.Login(userName, password);
+        if(result.getStatus() != ServiceResult.OperationResult.Error)
         {//The login process was completed without errors
-            if(result.getValue() > 0)
+            if(result.getStatus() == ServiceResult.OperationResult.Succeeded)
                 //Valid credentials
                 RequestManager.Login(request, response, result.getValue());
             else

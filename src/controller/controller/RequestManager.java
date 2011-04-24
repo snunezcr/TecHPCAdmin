@@ -10,6 +10,7 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import model.UserBase;
 
 /**
  *
@@ -32,7 +33,7 @@ public class RequestManager {
     /**
      * The name of the login page
      */
-    private static final String LoginPage = "/Hpca/login.jsp";
+    private static final String LoginPage = "/login.jsp";
     /**
      * The name of the main menu page
      */
@@ -70,9 +71,9 @@ public class RequestManager {
     // Class methods
     // -------------------------------------------------------------------------
     public static void Login(final HttpServletRequest request,
-            final HttpServletResponse response, final int userId) throws IOException
+            final HttpServletResponse response, final UserBase userData) throws IOException
     {
-        SessionManager.Login(request, userId);
+        SessionManager.Login(request, userData);
         response.sendRedirect(MainMenuPage);
     }
 

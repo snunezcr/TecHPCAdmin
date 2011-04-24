@@ -7,6 +7,7 @@ package security;
 
 import common.CommonFunctions;
 import common.ServiceResult;
+import model.UserBase;
 import security.db.SecurityDataManager;
 
 /**
@@ -47,12 +48,15 @@ public class SecurityManager {
      * @param password The password to validate
      * @return A value indicating if the credentials were valid
      */
-    public ServiceResult<Integer> Login(final String userName, final String password)
+    public ServiceResult<UserBase> Login(final String userName, final String password)
     {
         try
         {
-            Integer result = dataManager.Login(userName, password);
-            return new ServiceResult<Integer>(result);
+            UserBase result = dataManager.Login(userName, password);
+            if(result != null)
+                return new ServiceResult<UserBase>(result);
+            else 
+                return new ServiceResult<UserBase>();
         }
         catch(Exception ex)
         {

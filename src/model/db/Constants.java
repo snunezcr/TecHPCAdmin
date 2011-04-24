@@ -23,7 +23,12 @@ public class Constants {
     public static final String LoginSp = "Login";
     public static final int LoginParamUserName = 1;
     public static final int LoginParamPassword = 2;
-    public static final int LoginColResult = 1;
+    public static final int LoginColId = 1;
+    public static final int LoginColUserName = 2;
+    public static final int LoginColName = 3;
+    public static final int LoginColLastName1 = 4;
+    public static final int LoginColLastName2 = 5;
+    public static final int LoginColRole = 6;
 
     // Get user applications
     // -------------------------------------------------------------------------
