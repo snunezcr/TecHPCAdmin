@@ -8,6 +8,9 @@ package security.db;
 import db.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
 import model.User;
 import model.UserBase;
 
@@ -78,6 +81,34 @@ public class SecurityDataManager {
         ResultSet reader = dataHelper.ExecuteSP(Constants.NewUserSp, parameters);
         reader.next();
         int result = reader.getInt(Constants.NewExperimentColId);
+        dataHelper.CloseConnection(reader);
+        return result;
+    }
+
+    /**
+     * Gets all the system users
+     * @return all the system users
+     * @throws SQLException if the stored procedure couldn't be executed
+     */
+    public HashMap<Integer, User> GetAllUsers() throws SQLException
+    {
+        SqlParameter[] parameters = new SqlParameter[0];
+        ResultSet reader = dataHelper.ExecuteSP(Constants.AllUsersSp, parameters);
+        HashMap<Integer, User> result = new HashMap<Integer, User>();
+        while(reader.next())
+        {
+            int id = reader.getInt(Constants.AllUsersColId);
+            String name = reader.getString(Constants.AllUsersColName);
+            String userName = reader.getString(Constants.AllUsersColUserName);
+            String lastName1 = reader.getString(Constants.AllUsersColLastName1);
+            String lastName2 = reader.getString(Constants.AllUsersColLastName2);
+            String role = reader.getString(Constants.AllUsersColRole);
+            boolean enabled = reader.getBoolean(Constants.AllUsersColEnabled);
+            Date creationDate = reader.getDate(Constants.AllUsersColCreationDate);
+            User user = new User(id, userName, name, lastName1, lastName2, role, "", enabled,
+                    creationDate);
+            result.put(id, user);
+        }
         dataHelper.CloseConnection(reader);
         return result;
     }

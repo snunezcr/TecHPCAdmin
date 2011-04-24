@@ -8,6 +8,7 @@ package security;
 import common.CommonFunctions;
 import common.ServiceResult;
 import files.DirectoryManager;
+import java.util.HashMap;
 import model.User;
 import model.UserBase;
 import security.db.SecurityDataManager;
@@ -94,6 +95,22 @@ public class SecurityManager {
         {
             if(userId != -1)
                 CleanUserData(userId); //An error occurred while trying to create the folder struct
+            return CommonFunctions.CreateErrorServiceResult(ex);
+        }
+    }
+
+    /**
+     * Gets all the system users
+     * @return all the system users
+     */
+    public ServiceResult<HashMap<Integer, User>> GetAllUsers()
+    {
+        try
+        {
+            return new ServiceResult<HashMap<Integer, User>>(dataManager.GetAllUsers());
+        }
+        catch(Exception ex)
+        {
             return CommonFunctions.CreateErrorServiceResult(ex);
         }
     }

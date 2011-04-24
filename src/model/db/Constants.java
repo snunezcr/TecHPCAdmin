@@ -30,6 +30,18 @@ public class Constants {
     public static final int LoginColLastName2 = 5;
     public static final int LoginColRole = 6;
 
+    // Get all users
+    // -------------------------------------------------------------------------
+    public static final String AllUsersSp = "GetAllUsers";
+    public static final int AllUsersColId = 1;
+    public static final int AllUsersColUserName = 2;
+    public static final int AllUsersColName = 3;
+    public static final int AllUsersColLastName1 = 4;
+    public static final int AllUsersColLastName2 = 5;
+    public static final int AllUsersColRole = 6;
+    public static final int AllUsersColCreationDate = 7;
+    public static final int AllUsersColEnabled = 8;
+
     // Create new user
     // -------------------------------------------------------------------------
     public static final String NewUserSp = "CreateUser";

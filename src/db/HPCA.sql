@@ -4,7 +4,7 @@
 
 -- Dumped from database version 9.0.3
 -- Dumped by pg_dump version 9.0.3
--- Started on 2011-04-23 22:25:05 CST
+-- Started on 2011-04-24 11:06:05 CST
 
 SET statement_timeout = 0;
 SET client_encoding = 'UTF8';
@@ -14,7 +14,7 @@ SET client_min_messages = warning;
 SET escape_string_warning = off;
 
 --
--- TOC entry 1896 (class 1262 OID 24686)
+-- TOC entry 1897 (class 1262 OID 24686)
 -- Name: HPCA; Type: DATABASE; Schema: -; Owner: postgres
 --
 
@@ -33,7 +33,7 @@ SET client_min_messages = warning;
 SET escape_string_warning = off;
 
 --
--- TOC entry 356 (class 2612 OID 11574)
+-- TOC entry 357 (class 2612 OID 11574)
 -- Name: plpgsql; Type: PROCEDURAL LANGUAGE; Schema: -; Owner: postgres
 --
 
@@ -45,8 +45,8 @@ ALTER PROCEDURAL LANGUAGE plpgsql OWNER TO postgres;
 SET search_path = public, pg_catalog;
 
 --
--- TOC entry 320 (class 1247 OID 24689)
--- Dependencies: 6 1548
+-- TOC entry 321 (class 1247 OID 24689)
+-- Dependencies: 6 1549
 -- Name: experimentparameter; Type: TYPE; Schema: public; Owner: postgres
 --
 
@@ -60,18 +60,20 @@ CREATE TYPE experimentparameter AS (
 ALTER TYPE public.experimentparameter OWNER TO postgres;
 
 --
--- TOC entry 354 (class 1247 OID 24904)
--- Dependencies: 6 1566
+-- TOC entry 355 (class 1247 OID 24914)
+-- Dependencies: 6 1567
 -- Name: userdata; Type: TYPE; Schema: public; Owner: postgres
 --
 
 CREATE TYPE userdata AS (
-	"UserId" integer,
+	userid integer,
 	username text,
 	name text,
 	lastname1 text,
 	lastname2 text,
-	role text
+	role text,
+	creationdate timestamp without time zone,
+	enabled boolean
 );
 
 
@@ -79,7 +81,7 @@ ALTER TYPE public.userdata OWNER TO postgres;
 
 --
 -- TOC entry 28 (class 1255 OID 24849)
--- Dependencies: 356 6
+-- Dependencies: 357 6
 -- Name: addexperimentparameter(integer, text, text, text); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -102,7 +104,7 @@ ALTER FUNCTION public.addexperimentparameter(experimentid integer, paramname tex
 
 --
 -- TOC entry 18 (class 1255 OID 24690)
--- Dependencies: 6 356
+-- Dependencies: 6 357
 -- Name: addparallelconfiguration(integer, integer, boolean, text, text); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -121,7 +123,7 @@ ALTER FUNCTION public.addparallelconfiguration(experimentid integer, processors 
 
 --
 -- TOC entry 19 (class 1255 OID 24691)
--- Dependencies: 6 356
+-- Dependencies: 357 6
 -- Name: createexperiment(text, text, text, boolean, text, text, integer); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -150,7 +152,7 @@ ALTER FUNCTION public.createexperiment(name text, description text, app text, pa
 
 --
 -- TOC entry 29 (class 1255 OID 24851)
--- Dependencies: 356 6
+-- Dependencies: 357 6
 -- Name: createprogram(text, text, integer); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -173,8 +175,8 @@ $$;
 ALTER FUNCTION public.createprogram(description text, relativepath text, owner integer) OWNER TO postgres;
 
 --
--- TOC entry 32 (class 1255 OID 24906)
--- Dependencies: 6 356
+-- TOC entry 31 (class 1255 OID 24906)
+-- Dependencies: 6 357
 -- Name: createuser(text, text, text, text, text, text); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -207,13 +209,31 @@ $$;
 
 ALTER FUNCTION public.createuser(username text, password text, name text, lastname1 text, lastname2 text, role text) OWNER TO postgres;
 
+--
+-- TOC entry 33 (class 1255 OID 24917)
+-- Dependencies: 355 6
+-- Name: getallusers(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION getallusers() RETURNS SETOF userdata
+    LANGUAGE sql ROWS 10
+    AS $$
+	SELECT "UserId", "UserName", "Name", "LastName1", "LastName2", "Role", "CreationDate", "Enabled"
+	FROM "User" INNER JOIN "Role" ON "User"."RoleId" = "Role"."RoleId"
+	WHERE "Enabled" = true
+	ORDER BY "UserName" ASC;
+$$;
+
+
+ALTER FUNCTION public.getallusers() OWNER TO postgres;
+
 SET default_tablespace = '';
 
 SET default_with_oids = false;
 
 --
--- TOC entry 1549 (class 1259 OID 24692)
--- Dependencies: 1844 1845 6
+-- TOC entry 1550 (class 1259 OID 24692)
+-- Dependencies: 1845 1846 6
 -- Name: Application; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -231,7 +251,7 @@ ALTER TABLE public."Application" OWNER TO postgres;
 
 --
 -- TOC entry 20 (class 1255 OID 24700)
--- Dependencies: 322 6
+-- Dependencies: 323 6
 -- Name: getapplications(integer); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -246,8 +266,8 @@ CREATE FUNCTION getapplications(userid integer) RETURNS SETOF "Application"
 ALTER FUNCTION public.getapplications(userid integer) OWNER TO postgres;
 
 --
--- TOC entry 1550 (class 1259 OID 24701)
--- Dependencies: 1847 6
+-- TOC entry 1551 (class 1259 OID 24701)
+-- Dependencies: 1848 6
 -- Name: Experiment; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -268,8 +288,8 @@ CREATE TABLE "Experiment" (
 ALTER TABLE public."Experiment" OWNER TO postgres;
 
 --
--- TOC entry 1899 (class 0 OID 0)
--- Dependencies: 1550
+-- TOC entry 1900 (class 0 OID 0)
+-- Dependencies: 1551
 -- Name: COLUMN "Experiment"."ExecutablePath"; Type: COMMENT; Schema: public; Owner: postgres
 --
 
@@ -278,7 +298,7 @@ COMMENT ON COLUMN "Experiment"."ExecutablePath" IS 'We''re adding this just in c
 
 --
 -- TOC entry 24 (class 1255 OID 24708)
--- Dependencies: 325 6
+-- Dependencies: 326 6
 -- Name: getexperimentgeneralinfo(integer); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -309,7 +329,7 @@ ALTER FUNCTION public.getexperimentgeneralinfo(userid integer) OWNER TO postgres
 
 --
 -- TOC entry 21 (class 1255 OID 24709)
--- Dependencies: 320 6
+-- Dependencies: 6 321
 -- Name: getexperimentparameters(integer); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -331,7 +351,7 @@ $_$;
 ALTER FUNCTION public.getexperimentparameters(expid integer) OWNER TO postgres;
 
 --
--- TOC entry 1551 (class 1259 OID 24710)
+-- TOC entry 1552 (class 1259 OID 24710)
 -- Dependencies: 6
 -- Name: ExecutionStatistics; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
@@ -349,8 +369,8 @@ CREATE TABLE "ExecutionStatistics" (
 ALTER TABLE public."ExecutionStatistics" OWNER TO postgres;
 
 --
--- TOC entry 1900 (class 0 OID 0)
--- Dependencies: 1551
+-- TOC entry 1901 (class 0 OID 0)
+-- Dependencies: 1552
 -- Name: COLUMN "ExecutionStatistics"."UsedMemory"; Type: COMMENT; Schema: public; Owner: postgres
 --
 
@@ -359,7 +379,7 @@ COMMENT ON COLUMN "ExecutionStatistics"."UsedMemory" IS 'In MB';
 
 --
 -- TOC entry 25 (class 1255 OID 24713)
--- Dependencies: 6 328
+-- Dependencies: 329 6
 -- Name: getexperimentstatistics(integer); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -383,7 +403,7 @@ $_$;
 ALTER FUNCTION public.getexperimentstatistics(expid integer) OWNER TO postgres;
 
 --
--- TOC entry 1552 (class 1259 OID 24714)
+-- TOC entry 1553 (class 1259 OID 24714)
 -- Dependencies: 6
 -- Name: ParallelConfiguration; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
@@ -401,7 +421,7 @@ ALTER TABLE public."ParallelConfiguration" OWNER TO postgres;
 
 --
 -- TOC entry 22 (class 1255 OID 24720)
--- Dependencies: 330 6
+-- Dependencies: 6 331
 -- Name: getparallelconfiguration(integer); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -424,7 +444,7 @@ $_$;
 ALTER FUNCTION public.getparallelconfiguration(expid integer) OWNER TO postgres;
 
 --
--- TOC entry 1560 (class 1259 OID 24742)
+-- TOC entry 1561 (class 1259 OID 24742)
 -- Dependencies: 6
 -- Name: ParameterType; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
@@ -439,7 +459,7 @@ ALTER TABLE public."ParameterType" OWNER TO postgres;
 
 --
 -- TOC entry 26 (class 1255 OID 24845)
--- Dependencies: 343 6
+-- Dependencies: 6 344
 -- Name: getparametertypes(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -453,7 +473,7 @@ CREATE FUNCTION getparametertypes() RETURNS SETOF "ParameterType"
 ALTER FUNCTION public.getparametertypes() OWNER TO postgres;
 
 --
--- TOC entry 1562 (class 1259 OID 24747)
+-- TOC entry 1563 (class 1259 OID 24747)
 -- Dependencies: 6
 -- Name: Role; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
@@ -469,7 +489,7 @@ ALTER TABLE public."Role" OWNER TO postgres;
 
 --
 -- TOC entry 30 (class 1255 OID 24852)
--- Dependencies: 346 6
+-- Dependencies: 6 347
 -- Name: getusertypes(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -483,15 +503,15 @@ CREATE FUNCTION getusertypes() RETURNS SETOF "Role"
 ALTER FUNCTION public.getusertypes() OWNER TO postgres;
 
 --
--- TOC entry 31 (class 1255 OID 24905)
--- Dependencies: 6 354
+-- TOC entry 32 (class 1255 OID 24915)
+-- Dependencies: 6 355
 -- Name: login(text, text); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
 CREATE FUNCTION login(username text, password text) RETURNS SETOF userdata
     LANGUAGE sql ROWS 10
     AS $_$
-	SELECT "UserId", "UserName", "Name", "LastName1", "LastName2", "Role" 
+	SELECT "UserId", "UserName", "Name", "LastName1", "LastName2", "Role", "CreationDate", "Enabled"
 	FROM "User" INNER JOIN "Role" ON "User"."RoleId" = "Role"."RoleId"
 	WHERE "UserName" = $1 AND "Password" = md5($2) AND "Enabled" = true;
 $_$;
@@ -501,7 +521,7 @@ ALTER FUNCTION public.login(username text, password text) OWNER TO postgres;
 
 --
 -- TOC entry 23 (class 1255 OID 24722)
--- Dependencies: 6 356
+-- Dependencies: 357 6
 -- Name: saveexecution(timestamp without time zone, timestamp without time zone, integer, real, interval); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -533,7 +553,7 @@ ALTER FUNCTION public.saveexecution("startDate" timestamp without time zone, "fi
 
 --
 -- TOC entry 27 (class 1255 OID 24846)
--- Dependencies: 356 6
+-- Dependencies: 6 357
 -- Name: saveexecution(timestamp without time zone, timestamp without time zone, integer, real, integer); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -564,8 +584,8 @@ $$;
 ALTER FUNCTION public.saveexecution("startDate" timestamp without time zone, "finishDate" timestamp without time zone, "expId" integer, "usedMemory" real, "wallClockTime" integer) OWNER TO postgres;
 
 --
--- TOC entry 1553 (class 1259 OID 24723)
--- Dependencies: 6 1549
+-- TOC entry 1554 (class 1259 OID 24723)
+-- Dependencies: 1550 6
 -- Name: Application_ApplicationId_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -580,8 +600,8 @@ CREATE SEQUENCE "Application_ApplicationId_seq"
 ALTER TABLE public."Application_ApplicationId_seq" OWNER TO postgres;
 
 --
--- TOC entry 1901 (class 0 OID 0)
--- Dependencies: 1553
+-- TOC entry 1902 (class 0 OID 0)
+-- Dependencies: 1554
 -- Name: Application_ApplicationId_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -589,8 +609,8 @@ ALTER SEQUENCE "Application_ApplicationId_seq" OWNED BY "Application"."Applicati
 
 
 --
--- TOC entry 1902 (class 0 OID 0)
--- Dependencies: 1553
+-- TOC entry 1903 (class 0 OID 0)
+-- Dependencies: 1554
 -- Name: Application_ApplicationId_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -598,8 +618,8 @@ SELECT pg_catalog.setval('"Application_ApplicationId_seq"', 15, true);
 
 
 --
--- TOC entry 1554 (class 1259 OID 24725)
--- Dependencies: 6 1551
+-- TOC entry 1555 (class 1259 OID 24725)
+-- Dependencies: 6 1552
 -- Name: ExecutionStatistics_ExecutionId_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -614,8 +634,8 @@ CREATE SEQUENCE "ExecutionStatistics_ExecutionId_seq"
 ALTER TABLE public."ExecutionStatistics_ExecutionId_seq" OWNER TO postgres;
 
 --
--- TOC entry 1903 (class 0 OID 0)
--- Dependencies: 1554
+-- TOC entry 1904 (class 0 OID 0)
+-- Dependencies: 1555
 -- Name: ExecutionStatistics_ExecutionId_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -623,8 +643,8 @@ ALTER SEQUENCE "ExecutionStatistics_ExecutionId_seq" OWNED BY "ExecutionStatisti
 
 
 --
--- TOC entry 1904 (class 0 OID 0)
--- Dependencies: 1554
+-- TOC entry 1905 (class 0 OID 0)
+-- Dependencies: 1555
 -- Name: ExecutionStatistics_ExecutionId_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -632,8 +652,8 @@ SELECT pg_catalog.setval('"ExecutionStatistics_ExecutionId_seq"', 4, true);
 
 
 --
--- TOC entry 1555 (class 1259 OID 24727)
--- Dependencies: 1550 6
+-- TOC entry 1556 (class 1259 OID 24727)
+-- Dependencies: 1551 6
 -- Name: Experiment_ExperimentId_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -648,8 +668,8 @@ CREATE SEQUENCE "Experiment_ExperimentId_seq"
 ALTER TABLE public."Experiment_ExperimentId_seq" OWNER TO postgres;
 
 --
--- TOC entry 1905 (class 0 OID 0)
--- Dependencies: 1555
+-- TOC entry 1906 (class 0 OID 0)
+-- Dependencies: 1556
 -- Name: Experiment_ExperimentId_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -657,8 +677,8 @@ ALTER SEQUENCE "Experiment_ExperimentId_seq" OWNED BY "Experiment"."ExperimentId
 
 
 --
--- TOC entry 1906 (class 0 OID 0)
--- Dependencies: 1555
+-- TOC entry 1907 (class 0 OID 0)
+-- Dependencies: 1556
 -- Name: Experiment_ExperimentId_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -666,7 +686,7 @@ SELECT pg_catalog.setval('"Experiment_ExperimentId_seq"', 40, true);
 
 
 --
--- TOC entry 1556 (class 1259 OID 24729)
+-- TOC entry 1557 (class 1259 OID 24729)
 -- Dependencies: 6
 -- Name: InputParameters; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
@@ -683,8 +703,8 @@ CREATE TABLE "InputParameters" (
 ALTER TABLE public."InputParameters" OWNER TO postgres;
 
 --
--- TOC entry 1557 (class 1259 OID 24735)
--- Dependencies: 6 1556
+-- TOC entry 1558 (class 1259 OID 24735)
+-- Dependencies: 6 1557
 -- Name: InputParameters_ParameterId_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -699,8 +719,8 @@ CREATE SEQUENCE "InputParameters_ParameterId_seq"
 ALTER TABLE public."InputParameters_ParameterId_seq" OWNER TO postgres;
 
 --
--- TOC entry 1907 (class 0 OID 0)
--- Dependencies: 1557
+-- TOC entry 1908 (class 0 OID 0)
+-- Dependencies: 1558
 -- Name: InputParameters_ParameterId_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -708,8 +728,8 @@ ALTER SEQUENCE "InputParameters_ParameterId_seq" OWNED BY "InputParameters"."Par
 
 
 --
--- TOC entry 1908 (class 0 OID 0)
--- Dependencies: 1557
+-- TOC entry 1909 (class 0 OID 0)
+-- Dependencies: 1558
 -- Name: InputParameters_ParameterId_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -717,7 +737,7 @@ SELECT pg_catalog.setval('"InputParameters_ParameterId_seq"', 7, true);
 
 
 --
--- TOC entry 1558 (class 1259 OID 24737)
+-- TOC entry 1559 (class 1259 OID 24737)
 -- Dependencies: 6
 -- Name: NodeStatistics; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
@@ -734,8 +754,8 @@ CREATE TABLE "NodeStatistics" (
 ALTER TABLE public."NodeStatistics" OWNER TO postgres;
 
 --
--- TOC entry 1559 (class 1259 OID 24740)
--- Dependencies: 1558 6
+-- TOC entry 1560 (class 1259 OID 24740)
+-- Dependencies: 6 1559
 -- Name: NodeStatistics_NodeStatisticsId_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -750,8 +770,8 @@ CREATE SEQUENCE "NodeStatistics_NodeStatisticsId_seq"
 ALTER TABLE public."NodeStatistics_NodeStatisticsId_seq" OWNER TO postgres;
 
 --
--- TOC entry 1909 (class 0 OID 0)
--- Dependencies: 1559
+-- TOC entry 1910 (class 0 OID 0)
+-- Dependencies: 1560
 -- Name: NodeStatistics_NodeStatisticsId_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -759,8 +779,8 @@ ALTER SEQUENCE "NodeStatistics_NodeStatisticsId_seq" OWNED BY "NodeStatistics"."
 
 
 --
--- TOC entry 1910 (class 0 OID 0)
--- Dependencies: 1559
+-- TOC entry 1911 (class 0 OID 0)
+-- Dependencies: 1560
 -- Name: NodeStatistics_NodeStatisticsId_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -768,8 +788,8 @@ SELECT pg_catalog.setval('"NodeStatistics_NodeStatisticsId_seq"', 1, false);
 
 
 --
--- TOC entry 1561 (class 1259 OID 24745)
--- Dependencies: 1560 6
+-- TOC entry 1562 (class 1259 OID 24745)
+-- Dependencies: 1561 6
 -- Name: ParameterType_TypeId_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -784,8 +804,8 @@ CREATE SEQUENCE "ParameterType_TypeId_seq"
 ALTER TABLE public."ParameterType_TypeId_seq" OWNER TO postgres;
 
 --
--- TOC entry 1911 (class 0 OID 0)
--- Dependencies: 1561
+-- TOC entry 1912 (class 0 OID 0)
+-- Dependencies: 1562
 -- Name: ParameterType_TypeId_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -793,8 +813,8 @@ ALTER SEQUENCE "ParameterType_TypeId_seq" OWNED BY "ParameterType"."TypeId";
 
 
 --
--- TOC entry 1912 (class 0 OID 0)
--- Dependencies: 1561
+-- TOC entry 1913 (class 0 OID 0)
+-- Dependencies: 1562
 -- Name: ParameterType_TypeId_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -802,8 +822,8 @@ SELECT pg_catalog.setval('"ParameterType_TypeId_seq"', 4, true);
 
 
 --
--- TOC entry 1563 (class 1259 OID 24753)
--- Dependencies: 6 1562
+-- TOC entry 1564 (class 1259 OID 24753)
+-- Dependencies: 6 1563
 -- Name: Role_RoleId_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -818,8 +838,8 @@ CREATE SEQUENCE "Role_RoleId_seq"
 ALTER TABLE public."Role_RoleId_seq" OWNER TO postgres;
 
 --
--- TOC entry 1913 (class 0 OID 0)
--- Dependencies: 1563
+-- TOC entry 1914 (class 0 OID 0)
+-- Dependencies: 1564
 -- Name: Role_RoleId_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -827,8 +847,8 @@ ALTER SEQUENCE "Role_RoleId_seq" OWNED BY "Role"."RoleId";
 
 
 --
--- TOC entry 1914 (class 0 OID 0)
--- Dependencies: 1563
+-- TOC entry 1915 (class 0 OID 0)
+-- Dependencies: 1564
 -- Name: Role_RoleId_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -836,8 +856,8 @@ SELECT pg_catalog.setval('"Role_RoleId_seq"', 2, true);
 
 
 --
--- TOC entry 1564 (class 1259 OID 24755)
--- Dependencies: 1854 1855 6
+-- TOC entry 1565 (class 1259 OID 24755)
+-- Dependencies: 1855 1856 6
 -- Name: User; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -857,8 +877,8 @@ CREATE TABLE "User" (
 ALTER TABLE public."User" OWNER TO postgres;
 
 --
--- TOC entry 1565 (class 1259 OID 24763)
--- Dependencies: 6 1564
+-- TOC entry 1566 (class 1259 OID 24763)
+-- Dependencies: 1565 6
 -- Name: User_UserId_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -873,8 +893,8 @@ CREATE SEQUENCE "User_UserId_seq"
 ALTER TABLE public."User_UserId_seq" OWNER TO postgres;
 
 --
--- TOC entry 1915 (class 0 OID 0)
--- Dependencies: 1565
+-- TOC entry 1916 (class 0 OID 0)
+-- Dependencies: 1566
 -- Name: User_UserId_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -882,17 +902,17 @@ ALTER SEQUENCE "User_UserId_seq" OWNED BY "User"."UserId";
 
 
 --
--- TOC entry 1916 (class 0 OID 0)
--- Dependencies: 1565
+-- TOC entry 1917 (class 0 OID 0)
+-- Dependencies: 1566
 -- Name: User_UserId_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"User_UserId_seq"', 11, true);
+SELECT pg_catalog.setval('"User_UserId_seq"', 14, true);
 
 
 --
--- TOC entry 1846 (class 2604 OID 24765)
--- Dependencies: 1553 1549
+-- TOC entry 1847 (class 2604 OID 24765)
+-- Dependencies: 1554 1550
 -- Name: ApplicationId; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -900,8 +920,8 @@ ALTER TABLE "Application" ALTER COLUMN "ApplicationId" SET DEFAULT nextval('"App
 
 
 --
--- TOC entry 1849 (class 2604 OID 24766)
--- Dependencies: 1554 1551
+-- TOC entry 1850 (class 2604 OID 24766)
+-- Dependencies: 1555 1552
 -- Name: ExecutionId; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -909,8 +929,8 @@ ALTER TABLE "ExecutionStatistics" ALTER COLUMN "ExecutionId" SET DEFAULT nextval
 
 
 --
--- TOC entry 1848 (class 2604 OID 24767)
--- Dependencies: 1555 1550
+-- TOC entry 1849 (class 2604 OID 24767)
+-- Dependencies: 1556 1551
 -- Name: ExperimentId; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -918,8 +938,8 @@ ALTER TABLE "Experiment" ALTER COLUMN "ExperimentId" SET DEFAULT nextval('"Exper
 
 
 --
--- TOC entry 1850 (class 2604 OID 24768)
--- Dependencies: 1557 1556
+-- TOC entry 1851 (class 2604 OID 24768)
+-- Dependencies: 1558 1557
 -- Name: ParameterId; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -927,8 +947,8 @@ ALTER TABLE "InputParameters" ALTER COLUMN "ParameterId" SET DEFAULT nextval('"I
 
 
 --
--- TOC entry 1851 (class 2604 OID 24769)
--- Dependencies: 1559 1558
+-- TOC entry 1852 (class 2604 OID 24769)
+-- Dependencies: 1560 1559
 -- Name: NodeStatisticsId; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -936,8 +956,8 @@ ALTER TABLE "NodeStatistics" ALTER COLUMN "NodeStatisticsId" SET DEFAULT nextval
 
 
 --
--- TOC entry 1852 (class 2604 OID 24770)
--- Dependencies: 1561 1560
+-- TOC entry 1853 (class 2604 OID 24770)
+-- Dependencies: 1562 1561
 -- Name: TypeId; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -945,8 +965,8 @@ ALTER TABLE "ParameterType" ALTER COLUMN "TypeId" SET DEFAULT nextval('"Paramete
 
 
 --
--- TOC entry 1853 (class 2604 OID 24771)
--- Dependencies: 1563 1562
+-- TOC entry 1854 (class 2604 OID 24771)
+-- Dependencies: 1564 1563
 -- Name: RoleId; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -954,8 +974,8 @@ ALTER TABLE "Role" ALTER COLUMN "RoleId" SET DEFAULT nextval('"Role_RoleId_seq"'
 
 
 --
--- TOC entry 1856 (class 2604 OID 24772)
--- Dependencies: 1565 1564
+-- TOC entry 1857 (class 2604 OID 24772)
+-- Dependencies: 1566 1565
 -- Name: UserId; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -963,8 +983,8 @@ ALTER TABLE "User" ALTER COLUMN "UserId" SET DEFAULT nextval('"User_UserId_seq"'
 
 
 --
--- TOC entry 1885 (class 0 OID 24692)
--- Dependencies: 1549
+-- TOC entry 1886 (class 0 OID 24692)
+-- Dependencies: 1550
 -- Data for Name: Application; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -973,8 +993,8 @@ COPY "Application" ("ApplicationId", "Description", "UpdateDate", "OwnerId", "En
 
 
 --
--- TOC entry 1887 (class 0 OID 24710)
--- Dependencies: 1551
+-- TOC entry 1888 (class 0 OID 24710)
+-- Dependencies: 1552
 -- Data for Name: ExecutionStatistics; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -983,8 +1003,8 @@ COPY "ExecutionStatistics" ("ExecutionId", "ExperimentId", "StartDateTime", "Fin
 
 
 --
--- TOC entry 1886 (class 0 OID 24701)
--- Dependencies: 1550
+-- TOC entry 1887 (class 0 OID 24701)
+-- Dependencies: 1551
 -- Data for Name: Experiment; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -993,8 +1013,8 @@ COPY "Experiment" ("ExperimentId", "Name", "Description", "ExecutablePath", "App
 
 
 --
--- TOC entry 1889 (class 0 OID 24729)
--- Dependencies: 1556
+-- TOC entry 1890 (class 0 OID 24729)
+-- Dependencies: 1557
 -- Data for Name: InputParameters; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -1003,8 +1023,8 @@ COPY "InputParameters" ("ParameterId", "ParameterName", "ExperimentId", "Paramet
 
 
 --
--- TOC entry 1890 (class 0 OID 24737)
--- Dependencies: 1558
+-- TOC entry 1891 (class 0 OID 24737)
+-- Dependencies: 1559
 -- Data for Name: NodeStatistics; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -1013,8 +1033,8 @@ COPY "NodeStatistics" ("NodeStatisticsId", "ExecutionId", "NodeNumber", "TotalTi
 
 
 --
--- TOC entry 1888 (class 0 OID 24714)
--- Dependencies: 1552
+-- TOC entry 1889 (class 0 OID 24714)
+-- Dependencies: 1553
 -- Data for Name: ParallelConfiguration; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -1023,8 +1043,8 @@ COPY "ParallelConfiguration" ("ExperimentId", "NumberOfProcessors", "SaveNodeLog
 
 
 --
--- TOC entry 1891 (class 0 OID 24742)
--- Dependencies: 1560
+-- TOC entry 1892 (class 0 OID 24742)
+-- Dependencies: 1561
 -- Data for Name: ParameterType; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -1037,8 +1057,8 @@ COPY "ParameterType" ("TypeId", "Type") FROM stdin;
 
 
 --
--- TOC entry 1892 (class 0 OID 24747)
--- Dependencies: 1562
+-- TOC entry 1893 (class 0 OID 24747)
+-- Dependencies: 1563
 -- Data for Name: Role; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -1049,8 +1069,8 @@ COPY "Role" ("RoleId", "Role", "Description") FROM stdin;
 
 
 --
--- TOC entry 1893 (class 0 OID 24755)
--- Dependencies: 1564
+-- TOC entry 1894 (class 0 OID 24755)
+-- Dependencies: 1565
 -- Data for Name: User; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -1061,8 +1081,8 @@ COPY "User" ("UserId", "UserName", "Password", "Name", "LastName1", "LastName2",
 
 
 --
--- TOC entry 1858 (class 2606 OID 24774)
--- Dependencies: 1549 1549
+-- TOC entry 1859 (class 2606 OID 24774)
+-- Dependencies: 1550 1550
 -- Name: ApplicationPK; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1071,8 +1091,8 @@ ALTER TABLE ONLY "Application"
 
 
 --
--- TOC entry 1864 (class 2606 OID 24776)
--- Dependencies: 1552 1552
+-- TOC entry 1865 (class 2606 OID 24776)
+-- Dependencies: 1553 1553
 -- Name: ConfigurationId; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1081,8 +1101,8 @@ ALTER TABLE ONLY "ParallelConfiguration"
 
 
 --
--- TOC entry 1860 (class 2606 OID 24778)
--- Dependencies: 1550 1550
+-- TOC entry 1861 (class 2606 OID 24778)
+-- Dependencies: 1551 1551
 -- Name: ExperimentPK; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1091,8 +1111,8 @@ ALTER TABLE ONLY "Experiment"
 
 
 --
--- TOC entry 1868 (class 2606 OID 24780)
--- Dependencies: 1558 1558
+-- TOC entry 1869 (class 2606 OID 24780)
+-- Dependencies: 1559 1559
 -- Name: NodePK; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1101,8 +1121,8 @@ ALTER TABLE ONLY "NodeStatistics"
 
 
 --
--- TOC entry 1866 (class 2606 OID 24782)
--- Dependencies: 1556 1556
+-- TOC entry 1867 (class 2606 OID 24782)
+-- Dependencies: 1557 1557
 -- Name: ParameterPK; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1111,8 +1131,8 @@ ALTER TABLE ONLY "InputParameters"
 
 
 --
--- TOC entry 1872 (class 2606 OID 24784)
--- Dependencies: 1562 1562
+-- TOC entry 1873 (class 2606 OID 24784)
+-- Dependencies: 1563 1563
 -- Name: RolePK; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1121,8 +1141,8 @@ ALTER TABLE ONLY "Role"
 
 
 --
--- TOC entry 1862 (class 2606 OID 24786)
--- Dependencies: 1551 1551
+-- TOC entry 1863 (class 2606 OID 24786)
+-- Dependencies: 1552 1552
 -- Name: StatisticsPK; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1131,8 +1151,8 @@ ALTER TABLE ONLY "ExecutionStatistics"
 
 
 --
--- TOC entry 1870 (class 2606 OID 24788)
--- Dependencies: 1560 1560
+-- TOC entry 1871 (class 2606 OID 24788)
+-- Dependencies: 1561 1561
 -- Name: TypePK; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1141,8 +1161,8 @@ ALTER TABLE ONLY "ParameterType"
 
 
 --
--- TOC entry 1874 (class 2606 OID 24790)
--- Dependencies: 1564 1564
+-- TOC entry 1875 (class 2606 OID 24790)
+-- Dependencies: 1565 1565
 -- Name: UserPK; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1151,8 +1171,8 @@ ALTER TABLE ONLY "User"
 
 
 --
--- TOC entry 1875 (class 1259 OID 24791)
--- Dependencies: 1564
+-- TOC entry 1876 (class 1259 OID 24791)
+-- Dependencies: 1565
 -- Name: fki_UserRole; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1160,8 +1180,8 @@ CREATE INDEX "fki_UserRole" ON "User" USING btree ("RoleId");
 
 
 --
--- TOC entry 1883 (class 2606 OID 24792)
--- Dependencies: 1861 1558 1551
+-- TOC entry 1884 (class 2606 OID 24792)
+-- Dependencies: 1862 1559 1552
 -- Name: BelongsToExecution; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1170,8 +1190,8 @@ ALTER TABLE ONLY "NodeStatistics"
 
 
 --
--- TOC entry 1881 (class 2606 OID 24797)
--- Dependencies: 1859 1556 1550
+-- TOC entry 1882 (class 2606 OID 24797)
+-- Dependencies: 1860 1551 1557
 -- Name: BelongsToExperiment; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1180,8 +1200,8 @@ ALTER TABLE ONLY "InputParameters"
 
 
 --
--- TOC entry 1879 (class 2606 OID 24802)
--- Dependencies: 1859 1551 1550
+-- TOC entry 1880 (class 2606 OID 24802)
+-- Dependencies: 1551 1552 1860
 -- Name: ExecutedExperiment; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1190,8 +1210,8 @@ ALTER TABLE ONLY "ExecutionStatistics"
 
 
 --
--- TOC entry 1880 (class 2606 OID 24807)
--- Dependencies: 1550 1552 1859
+-- TOC entry 1881 (class 2606 OID 24807)
+-- Dependencies: 1860 1551 1553
 -- Name: ExperimentConfiguration; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1200,8 +1220,8 @@ ALTER TABLE ONLY "ParallelConfiguration"
 
 
 --
--- TOC entry 1877 (class 2606 OID 24812)
--- Dependencies: 1550 1873 1564
+-- TOC entry 1878 (class 2606 OID 24812)
+-- Dependencies: 1551 1565 1874
 -- Name: ExperimentOwner; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1210,8 +1230,8 @@ ALTER TABLE ONLY "Experiment"
 
 
 --
--- TOC entry 1876 (class 2606 OID 24817)
--- Dependencies: 1549 1564 1873
+-- TOC entry 1877 (class 2606 OID 24817)
+-- Dependencies: 1874 1565 1550
 -- Name: OwnerPK; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1220,8 +1240,8 @@ ALTER TABLE ONLY "Application"
 
 
 --
--- TOC entry 1882 (class 2606 OID 24822)
--- Dependencies: 1556 1560 1869
+-- TOC entry 1883 (class 2606 OID 24822)
+-- Dependencies: 1870 1561 1557
 -- Name: ParameterType; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1230,8 +1250,8 @@ ALTER TABLE ONLY "InputParameters"
 
 
 --
--- TOC entry 1878 (class 2606 OID 24827)
--- Dependencies: 1550 1549 1857
+-- TOC entry 1879 (class 2606 OID 24827)
+-- Dependencies: 1858 1551 1550
 -- Name: UsedApplication; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1240,8 +1260,8 @@ ALTER TABLE ONLY "Experiment"
 
 
 --
--- TOC entry 1884 (class 2606 OID 24832)
--- Dependencies: 1564 1562 1871
+-- TOC entry 1885 (class 2606 OID 24832)
+-- Dependencies: 1872 1565 1563
 -- Name: UserRole; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1250,7 +1270,7 @@ ALTER TABLE ONLY "User"
 
 
 --
--- TOC entry 1898 (class 0 OID 0)
+-- TOC entry 1899 (class 0 OID 0)
 -- Dependencies: 6
 -- Name: public; Type: ACL; Schema: -; Owner: postgres
 --
@@ -1261,7 +1281,7 @@ GRANT ALL ON SCHEMA public TO postgres;
 GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
--- Completed on 2011-04-23 22:25:06 CST
+-- Completed on 2011-04-24 11:06:06 CST
 
 --
 -- PostgreSQL database dump complete

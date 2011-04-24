@@ -46,8 +46,8 @@ public class RequestManager {
 
     public static final String MyProgramsPage = "/Hpca/normal/my-programs.jsp";
 
-    public static final String AllUsersPage = "all-users.jsp";
-    private static final String AllUsersFullPage = "/administrator/all-users.jsp";
+    public static final String AllUsersFullPage = "/Hpca/administrator/all-users.jsp";
+    private static final String AllUsersPage = "/administrator/all-users.jsp";
 
     // Request parameters
     // -------------------------------------------------------------------------
@@ -156,13 +156,13 @@ public class RequestManager {
     public static void SendUserCreationError(final HttpServletRequest request,
             final HttpServletResponse response) throws ServletException, IOException
     {
-        sendError(request, response, AllUsersFullPage, ErrorCodes.UserCreationError);
+        sendError(request, response, AllUsersPage, ErrorCodes.UserCreationError);
     }
 
     public static void SendLoginExistsError(final HttpServletRequest request,
             final HttpServletResponse response) throws ServletException, IOException
     {
-        sendError(request, response, AllUsersFullPage, ErrorCodes.LoginExists);
+        sendError(request, response, AllUsersPage, ErrorCodes.LoginExists);
     }
 
     private static void sendError(final HttpServletRequest request,

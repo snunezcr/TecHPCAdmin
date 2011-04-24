@@ -100,4 +100,13 @@ public class UserBase {
         this.userId = userId;
     }
 
+    /**
+     * Gets the user full name
+     * @return the user full name
+     */
+    public String getFullName()
+    {
+        return name + " " + lastName1 + " " + lastName2;
+    }
+
 }

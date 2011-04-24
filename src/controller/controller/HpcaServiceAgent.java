@@ -57,6 +57,15 @@ public class HpcaServiceAgent {
          return SecurityManager.GetInstance().CreateUser(newUser);
     }
 
+    /**
+     * Gets all the system users
+     * @return all the system users
+     */
+    public ServiceResult<HashMap<Integer, User>> GetAllUsers()
+    {
+        return SecurityManager.GetInstance().GetAllUsers();
+    }
+
     // Common methods
     // -------------------------------------------------------------------------
     public ServiceResult<String[]> GetParameterTypes(final HttpServletRequest request)

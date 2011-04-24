@@ -9,7 +9,7 @@ import common.ServiceResult;
 import controller.HpcaServiceAgent;
 import controller.RequestManager;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.Calendar;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -38,13 +38,14 @@ public class srvNewUser extends HttpServlet {
         String userName = request.getParameter("txtUserName");
         String password = request.getParameter("txtPassword");
         String role = request.getParameter("cmbRole");
-        User user = new User(-1, userName, name, lastName1, lastName2, role, password);
+        User user = new User(-1, userName, name, lastName1, lastName2, role, password, true,
+                Calendar.getInstance().getTime());
 
         HpcaServiceAgent agent = new HpcaServiceAgent();
         ServiceResult<Integer> result = agent.CreateUser(user);
 
         if(result.getStatus() == ServiceResult.OperationResult.Succeeded)
-            response.sendRedirect(RequestManager.AllUsersPage);
+            response.sendRedirect(RequestManager.AllUsersFullPage);
         else if(result.getStatus() == ServiceResult.OperationResult.EmptyResult)
             //This login already exists
             RequestManager.SendLoginExistsError(request, response);
