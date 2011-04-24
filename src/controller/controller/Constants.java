@@ -23,6 +23,8 @@ public class Constants {
     public static final String CharTypeName = "char";
     public static final String FloatTypeName = "float";
     public static final String StringTypeName = "string";
+    
+    public static final String AdminRole = "Administrator";
 
     // Page names
     // -------------------------------------------------------------------------
@@ -46,11 +48,20 @@ public class Constants {
     public static final String ZeroApplicationsErrorMessage = "Debe instalar o subir aplicaciones"
             + "antes de crear un experimento.";
 
+    public static final String GetRolesErrorMessage = "No se pudieron obtener los roles de usuario."
+            + "<br />Por favor contacte al administrador del sistema.";
+
     public static final String ZeroTypesErrorMessage = "No hay tipos de parámetros para el sistema."
             + "<br />Por favor contacte al administrador del sistema.";
 
     public static final String NewExperimentIncompleteInfoErrorMessage = "Debe completar el nombre "
             + "y descripción del experimento.";
+
+    public static final String NewUserIncompleteInfoErrorMessage = "Debe completar todos los datos "
+            + "para poder crear el usuario.";
+
+    public static final String BadPasswordConfirmation = "La contraseña y su confirmación no "
+            + "coinciden.";
 
     public static final String UploadProgramaIncompleteInfoErrorMessage = "Debe completar todos los"
             + " datos antes de subir el programa.";

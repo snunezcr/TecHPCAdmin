@@ -24,6 +24,7 @@ public class SessionManager {
     private static final String ExperimentHash = "ExperimentHash";
     private static final String ApplicationsHash = "ApplicationsHash";
     private static final String ParamTypes = "ParameterTypes";
+    private static final String UserRoles = "UserRoles";
 
     public static void Login(final HttpServletRequest request, final UserBase user)
     {
@@ -35,6 +36,11 @@ public class SessionManager {
     public static boolean IsLoggedIn(final HttpServletRequest request)
     {
         return request.getSession().getAttribute(UserId) != null;
+    }
+
+    public static boolean IsAdministrator(final HttpServletRequest request)
+    {
+        return request.getSession().getAttribute(UserRole).toString().equals(Constants.AdminRole);
     }
 
     public static Integer GetUserId(final HttpServletRequest request)
@@ -82,6 +88,17 @@ public class SessionManager {
     public static ServiceResult<String[]> GetParameterTypes(final HttpServletRequest request)
     {
         return (ServiceResult<String[]>)request.getSession().getAttribute(ParamTypes);
+    }
+
+    public static void SetUserRoles(final HttpServletRequest request,
+            final ServiceResult<String[]> roles)
+    {
+        request.getSession().setAttribute(UserRoles, roles);
+    }
+
+    public static ServiceResult<String[]> GetUserRoles(final HttpServletRequest request)
+    {
+        return (ServiceResult<String[]>)request.getSession().getAttribute(UserRoles);
     }
 
 }

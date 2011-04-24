@@ -30,6 +30,17 @@ public class Constants {
     public static final int LoginColLastName2 = 5;
     public static final int LoginColRole = 6;
 
+    // Create new user
+    // -------------------------------------------------------------------------
+    public static final String NewUserSp = "CreateUser";
+    public static final int NewUserParamUserName = 1;
+    public static final int NewUserParamPassword = 2;
+    public static final int NewUserParamName = 3;
+    public static final int NewUserParamLastName1 = 4;
+    public static final int NewUserParamLastName2 = 5;
+    public static final int NewUserParamRole = 6;
+    public static final int NewUserColResult = 1;
+
     // Get user applications
     // -------------------------------------------------------------------------
     public static final String UserAppsSp = "GetApplications";
@@ -51,6 +62,11 @@ public class Constants {
     // -------------------------------------------------------------------------
     public static final String ParamTypesSp = "GetParameterTypes";
     public static final String ParamTypesColName = "Type";
+
+    // Get parameter types
+    // -------------------------------------------------------------------------
+    public static final String UserRolesSp = "GetUserTypes";
+    public static final String UserRolesColName = "Role";
 
     // Create new experiment
     // -------------------------------------------------------------------------

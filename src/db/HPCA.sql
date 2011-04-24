@@ -4,7 +4,7 @@
 
 -- Dumped from database version 9.0.3
 -- Dumped by pg_dump version 9.0.3
--- Started on 2011-04-23 18:54:03 CST
+-- Started on 2011-04-23 22:25:05 CST
 
 SET statement_timeout = 0;
 SET client_encoding = 'UTF8';
@@ -173,17 +173,18 @@ $$;
 ALTER FUNCTION public.createprogram(description text, relativepath text, owner integer) OWNER TO postgres;
 
 --
--- TOC entry 31 (class 1255 OID 24858)
+-- TOC entry 32 (class 1255 OID 24906)
 -- Dependencies: 6 356
 -- Name: createuser(text, text, text, text, text, text); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
-CREATE FUNCTION createuser(username text, password text, name text, lastname1 text, lastname2 text, role text) RETURNS boolean
+CREATE FUNCTION createuser(username text, password text, name text, lastname1 text, lastname2 text, role text) RETURNS integer
     LANGUAGE plpgsql
     AS $$
 DECLARE
 	roleId int;
 	userCount int;
+	userId int;
 BEGIN
 
 	SELECT COUNT("UserName") INTO userCount FROM "User" WHERE "UserName" = username;
@@ -194,9 +195,11 @@ BEGIN
 		INSERT INTO "User"("UserName", "Password", "Name", "LastName1",
 		"LastName2", "RoleId")
 		VALUES(username, password, name, lastname1, lastname2, roleid);
-		return true;
+
+		SELECT "UserId" INTO userId FROM "User" WHERE "UserName" = username;
+		return userId;
 	ELSE
-		return false;
+		return -1;
 	END IF;
 END;
 $$;
@@ -480,7 +483,7 @@ CREATE FUNCTION getusertypes() RETURNS SETOF "Role"
 ALTER FUNCTION public.getusertypes() OWNER TO postgres;
 
 --
--- TOC entry 32 (class 1255 OID 24905)
+-- TOC entry 31 (class 1255 OID 24905)
 -- Dependencies: 6 354
 -- Name: login(text, text); Type: FUNCTION; Schema: public; Owner: postgres
 --
@@ -530,7 +533,7 @@ ALTER FUNCTION public.saveexecution("startDate" timestamp without time zone, "fi
 
 --
 -- TOC entry 27 (class 1255 OID 24846)
--- Dependencies: 6 356
+-- Dependencies: 356 6
 -- Name: saveexecution(timestamp without time zone, timestamp without time zone, integer, real, integer); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -659,7 +662,7 @@ ALTER SEQUENCE "Experiment_ExperimentId_seq" OWNED BY "Experiment"."ExperimentId
 -- Name: Experiment_ExperimentId_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"Experiment_ExperimentId_seq"', 38, true);
+SELECT pg_catalog.setval('"Experiment_ExperimentId_seq"', 40, true);
 
 
 --
@@ -884,7 +887,7 @@ ALTER SEQUENCE "User_UserId_seq" OWNED BY "User"."UserId";
 -- Name: User_UserId_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"User_UserId_seq"', 4, true);
+SELECT pg_catalog.setval('"User_UserId_seq"', 11, true);
 
 
 --
@@ -1040,8 +1043,8 @@ COPY "ParameterType" ("TypeId", "Type") FROM stdin;
 --
 
 COPY "Role" ("RoleId", "Role", "Description") FROM stdin;
-1	Administrator	This user can create, edit and delete other non-administrator user, and it also has the experiment owner's rights.
 2	Experiment Owner	This user can create new experiments, execute them, retrieve the statistics and results of a experiment and install and upload applications for execution.
+1	Administrator	This user can create, edit and delete other non-administrator user, and it also has the experiment owner's rights.
 \.
 
 
@@ -1258,7 +1261,7 @@ GRANT ALL ON SCHEMA public TO postgres;
 GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
--- Completed on 2011-04-23 18:54:04 CST
+-- Completed on 2011-04-23 22:25:06 CST
 
 --
 -- PostgreSQL database dump complete

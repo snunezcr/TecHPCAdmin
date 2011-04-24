@@ -7,6 +7,8 @@ package security;
 
 import common.CommonFunctions;
 import common.ServiceResult;
+import files.DirectoryManager;
+import model.User;
 import model.UserBase;
 import security.db.SecurityDataManager;
 
@@ -62,6 +64,43 @@ public class SecurityManager {
         {
             return CommonFunctions.CreateErrorServiceResult(ex);
         }
+    }
+
+    /**
+     * Creates a new user
+     * @param newUser The users data that will be saved
+     * @return The new user's id if the userName is unique, empty otherwise
+     */
+    public ServiceResult<Integer> CreateUser(User newUser)
+    {
+        int userId = -1;
+        try
+        {
+            userId = dataManager.CreateUser(newUser);
+            if(userId == -1)//The userName already exists
+                return new ServiceResult<Integer>();
+
+            //Now we have to create the user directory structure
+            DirectoryManager dirManager = DirectoryManager.GetInstance();
+            newUser.setUserId(userId);
+            boolean dirResult = dirManager.CreateUserStructure(newUser).getValue();
+            if(!dirResult) //We have to manage this in the same way as a DB error
+                throw new Exception("No se pudo crear la estructura de directorios.");
+
+            //Everything went fine
+            return new ServiceResult<Integer>(userId);
+        }
+        catch(Exception ex)
+        {
+            if(userId != -1)
+                CleanUserData(userId); //An error occurred while trying to create the folder struct
+            return CommonFunctions.CreateErrorServiceResult(ex);
+        }
+    }
+
+    private void CleanUserData(final int userId)
+    {//TODO: Eliminar el registro de la BD
+
     }
 
 }

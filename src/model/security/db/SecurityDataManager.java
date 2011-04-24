@@ -7,6 +7,8 @@ package security.db;
 
 import db.*;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import model.User;
 import model.UserBase;
 
 /**
@@ -34,9 +36,9 @@ public class SecurityDataManager {
      * @param userName The userName to validate
      * @param password The password to validate
      * @return The id of the logged user
-     * @throws java.sql.SQLException if the stored procedure couldn't be executed
+     * @throws SQLException if the stored procedure couldn't be executed
      */
-    public UserBase Login(String userName, String password) throws java.sql.SQLException
+    public UserBase Login(String userName, String password) throws SQLException
     {
         SqlParameter[] parameters = new SqlParameter[]{
             new SqlParameter(Constants.LoginParamUserName, userName),
@@ -53,6 +55,29 @@ public class SecurityDataManager {
             String role = reader.getString(Constants.LoginColRole);
             result = new UserBase(id, userName, name, lastName1, lastName2, role);
         }
+        dataHelper.CloseConnection(reader);
+        return result;
+    }
+
+    /**
+     * Stores a new users data to the DB
+     * @param newUser The users data that will be saved
+     * @return The new user id if the userName is unique, -1 otherwise
+     * @throws SQLException if the stored procedure couldn't be executed
+     */
+    public int CreateUser(User newUser) throws SQLException
+    {
+        SqlParameter[] parameters = new SqlParameter[]{
+            new SqlParameter(Constants.NewUserParamName, newUser.getName()),
+            new SqlParameter(Constants.NewUserParamLastName1, newUser.getLastName1()),
+            new SqlParameter(Constants.NewUserParamLastName2, newUser.getLastName2()),
+            new SqlParameter(Constants.NewUserParamPassword, newUser.getPassword()),
+            new SqlParameter(Constants.NewUserParamRole, newUser.getType()),
+            new SqlParameter(Constants.NewUserParamUserName, newUser.getUserName())
+        };
+        ResultSet reader = dataHelper.ExecuteSP(Constants.NewUserSp, parameters);
+        reader.next();
+        int result = reader.getInt(Constants.NewExperimentColId);
         dataHelper.CloseConnection(reader);
         return result;
     }

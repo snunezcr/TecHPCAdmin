@@ -25,7 +25,9 @@ public class RequestManager {
         InvalidCredentials,
         LoginServerError,
         ExperimentCreationError,
-        ProgramCreationError
+        ProgramCreationError,
+        UserCreationError,
+        LoginExists
     }
 
     // Page names
@@ -34,6 +36,7 @@ public class RequestManager {
      * The name of the login page
      */
     private static final String LoginPage = "/login.jsp";
+    private static final String FullLoginPage = "/Hpca/login.jsp";
     /**
      * The name of the main menu page
      */
@@ -42,6 +45,9 @@ public class RequestManager {
     public static final String MyExperimentsPage = "/Hpca/normal/my-experiments.jsp";
 
     public static final String MyProgramsPage = "/Hpca/normal/my-programs.jsp";
+
+    public static final String AllUsersPage = "all-users.jsp";
+    private static final String AllUsersFullPage = "/administrator/all-users.jsp";
 
     // Request parameters
     // -------------------------------------------------------------------------
@@ -63,10 +69,16 @@ public class RequestManager {
      * trying to login
      */
     private static final String loginServerErrorMessage = "Se produjo un error al intentar "
-            + "conectarse al sistema.<br />Por favor contacte al administrador dl sitio.";
+            + "conectarse al sistema.<br />Por favor contacte al administrador del sitio.";
 
     private static final String experimentCreationError = "Se produjo un error al intentar "
-            + "crear el experimento.<br />Por favor contacte al administrador dl sitio.";
+            + "crear el experimento.<br />Por favor contacte al administrador del sitio.";
+
+    private static final String userCreationError = "Se produjo un error al intentar "
+            + "crear el usuario.<br />Por favor contacte al administrador del sitio.";
+
+    private static final String loginExistsError = "No se pudo crear el usuario. El login ya está "
+            + "en uso";
 
     // Class methods
     // -------------------------------------------------------------------------
@@ -82,7 +94,21 @@ public class RequestManager {
     {
         boolean result = SessionManager.IsLoggedIn(request);
         if(!result)
-            response.sendRedirect(LoginPage);
+            response.sendRedirect(FullLoginPage);
+        return result;
+    }
+
+    public static boolean HasAdminRights(final HttpServletRequest request) throws IOException
+    {
+        return SessionManager.IsLoggedIn(request) && SessionManager.IsAdministrator(request);
+    }
+
+    public static boolean VerifyAdminRights(final HttpServletRequest request,
+            final HttpServletResponse response) throws IOException
+    {
+        boolean result = HasAdminRights(request);
+        if(!result)
+            response.sendRedirect(FullLoginPage);
         return result;
     }
 
@@ -97,6 +123,8 @@ public class RequestManager {
             case InvalidCredentials: return invalidCredentialsMessage;
             case LoginServerError: return loginServerErrorMessage;
             case ExperimentCreationError: return experimentCreationError;
+            case UserCreationError: return userCreationError;
+            case LoginExists: return loginExistsError;
             default: return "";
         }
     }
@@ -123,6 +151,18 @@ public class RequestManager {
             final HttpServletResponse response) throws ServletException, IOException
     {
         sendError(request, response, LoginPage, ErrorCodes.LoginServerError);
+    }
+
+    public static void SendUserCreationError(final HttpServletRequest request,
+            final HttpServletResponse response) throws ServletException, IOException
+    {
+        sendError(request, response, AllUsersFullPage, ErrorCodes.UserCreationError);
+    }
+
+    public static void SendLoginExistsError(final HttpServletRequest request,
+            final HttpServletResponse response) throws ServletException, IOException
+    {
+        sendError(request, response, AllUsersFullPage, ErrorCodes.LoginExists);
     }
 
     private static void sendError(final HttpServletRequest request,

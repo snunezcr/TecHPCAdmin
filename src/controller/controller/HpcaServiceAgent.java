@@ -18,6 +18,7 @@ import model.Application;
 import model.ApplicationBase;
 import model.Experiment;
 import model.ExperimentBase;
+import model.User;
 import model.UserBase;
 import security.SecurityManager;
 
@@ -46,6 +47,16 @@ public class HpcaServiceAgent {
         return SecurityManager.GetInstance().Login(userName, password);
     }
 
+    /**
+     * Creates a new user
+     * @param newUser The users data that will be saved
+     * @return The new user's id if the userName is unique, empty otherwise
+     */
+    public ServiceResult<Integer> CreateUser(User newUser)
+    {
+         return SecurityManager.GetInstance().CreateUser(newUser);
+    }
+
     // Common methods
     // -------------------------------------------------------------------------
     public ServiceResult<String[]> GetParameterTypes(final HttpServletRequest request)
@@ -60,6 +71,24 @@ public class HpcaServiceAgent {
     }
 
     /**
+     * Gets the existing user roles
+     * @param request The request of the page that is invoking the function
+     * @return the existing user roles
+     */
+    public ServiceResult<String[]> GetUserRoles(final HttpServletRequest request)
+    {
+        ServiceResult<String[]> result = SessionManager.GetUserRoles(request);
+        if(result == null)
+        {
+            result = CommonManager.GetInstance().GetUserRoles();
+            SessionManager.SetUserRoles(request, result);
+        }
+        return result;
+    }
+
+    // Application methods
+    // -------------------------------------------------------------------------
+    /**
      * Gets the path in which applications are stored for the current user
      * @param request The request of the page that is invoking this function
      * @return the path in which applications are stored for the current user
@@ -70,8 +99,6 @@ public class HpcaServiceAgent {
         return DirectoryManager.GetInstance().GetApplicationsPath(userId);
     }
 
-    // Application methods
-    // -------------------------------------------------------------------------
     /**
      * Retrieves all the applications that were uploaded by the current user
      * @return A list with all the user applications

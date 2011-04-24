@@ -56,4 +56,21 @@ public class CommonManager {
         }
     }
 
+    /**
+     * Gets the existing user roles
+     * @return the existing user roles
+     */
+    public ServiceResult<String[]> GetUserRoles()
+    {
+        try
+        {
+            String[] result = dataManager.GetUserRoles();
+            return new ServiceResult<String[]>(result);
+        }
+        catch(Exception ex)
+        {
+            return CommonFunctions.CreateErrorServiceResult(ex);
+        }
+    }
+
 }

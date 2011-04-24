@@ -50,4 +50,20 @@ public class CommonDataManager {
         return result.toArray(new String[result.size()]);
     }
 
+    /**
+     * Gets the existing user roles
+     * @return the existing user roles
+     * @throws SQLException if the stored procedure couldn't be executed
+     */
+    public String[] GetUserRoles() throws SQLException
+    {
+        SqlParameter[] parameters = new SqlParameter[0];
+        ResultSet reader = dataHelper.ExecuteSP(Constants.UserRolesSp, parameters);
+        List<String> result = new LinkedList<String>();
+        while(reader.next())
+            result.add(reader.getString(Constants.UserRolesColName));
+        dataHelper.CloseConnection(reader);
+        return result.toArray(new String[result.size()]);
+    }
+
 }

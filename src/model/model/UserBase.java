@@ -91,4 +91,13 @@ public class UserBase {
         return userId;
     }
 
+    /**
+     * Set the user's id
+     *
+     * @param userId The user id
+     */
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
 }

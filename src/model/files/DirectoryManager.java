@@ -9,6 +9,7 @@ import common.CommonFunctions;
 import common.ServiceResult;
 import config.ConfigurationManager;
 import java.io.File;
+import model.UserBase;
 
 /**
  *
@@ -68,6 +69,27 @@ public class DirectoryManager {
             boolean success = CreateDirectory(base + "bin")
                               && CreateDirectory(base + "log")
                               && CreateDirectory(base + "stats");
+            return new ServiceResult<Boolean>(success);
+        }
+        catch(Exception ex)
+        {
+            return CommonFunctions.CreateErrorServiceResult(ex);
+        }
+    }
+
+    /**
+     * Creates the data structure for a user
+     * @param user The user's information
+     * @return True if the structure could be created, false otherwise
+     */
+    public ServiceResult<Boolean> CreateUserStructure(final UserBase user)
+    {
+        try
+        {
+            String base = GetPathForUser(user.getUserId());
+            boolean success = CreateDirectory(base + "bin")
+                              && CreateDirectory(base + "data")
+                              && CreateDirectory(base + "experiments");
             return new ServiceResult<Boolean>(success);
         }
         catch(Exception ex)
