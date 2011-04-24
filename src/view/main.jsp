@@ -7,6 +7,18 @@
 <%@page import="controller.RequestManager"%>
 <%
     if(!RequestManager.VerifyLogin(request, response)) return;
+
+    String adminMenu = "";
+    //Now let's check if the user has administrator rights, if so we have to display it's menu too
+    if(RequestManager.HasAdminRights(request))
+    {
+        adminMenu += "<br />"
+                + "<div class='menuTitle'>Menú de Administrador</div>"
+                + "<ul style='list-style-type: circle'>"
+                + " <li><a href='#' onclick=\"redirect('administrator/all-users.jsp')\">Lista de usuarios</a></li>"
+                + " <li><a href='#' onclick=\"redirect('administrator/new-user.jsp')\">Agregar usuario</a></li>"
+                + "</ul>";
+    }
 %>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -45,12 +57,7 @@
                         <li><a href="#" onclick="redirect('normal/upload-program.jsp')">Subir ejecutable</a></li>
                         <li><a href="#" onclick="redirect('normal/install-program.jsp')">Instalar programa</a></li>
                     </ul>
-                    <br />
-                    <div class="menuTitle">Menú de Administrador</div>
-                    <ul style="list-style-type: circle">
-                        <li><a href="#" onclick="redirect('administrator/all-users.jsp')">Lista de usuarios</a></li>
-                        <li><a href="#" onclick="redirect('administrator/new-user.jsp')">Agregar usuario</a></li>
-                    </ul>
+                    <%= adminMenu %>
                 </td>
                 <td valign="top">
                     <iframe width="100%" class="body" src="normal/my-experiments.jsp" id="displayFrame" frameborder="0"></iframe>
