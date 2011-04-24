@@ -4,7 +4,7 @@
 
 -- Dumped from database version 9.0.3
 -- Dumped by pg_dump version 9.0.3
--- Started on 2011-04-24 11:06:05 CST
+-- Started on 2011-04-24 11:22:18 CST
 
 SET statement_timeout = 0;
 SET client_encoding = 'UTF8';
@@ -104,7 +104,7 @@ ALTER FUNCTION public.addexperimentparameter(experimentid integer, paramname tex
 
 --
 -- TOC entry 18 (class 1255 OID 24690)
--- Dependencies: 6 357
+-- Dependencies: 357 6
 -- Name: addparallelconfiguration(integer, integer, boolean, text, text); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -123,7 +123,7 @@ ALTER FUNCTION public.addparallelconfiguration(experimentid integer, processors 
 
 --
 -- TOC entry 19 (class 1255 OID 24691)
--- Dependencies: 357 6
+-- Dependencies: 6 357
 -- Name: createexperiment(text, text, text, boolean, text, text, integer); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -152,7 +152,7 @@ ALTER FUNCTION public.createexperiment(name text, description text, app text, pa
 
 --
 -- TOC entry 29 (class 1255 OID 24851)
--- Dependencies: 357 6
+-- Dependencies: 6 357
 -- Name: createprogram(text, text, integer); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -175,7 +175,7 @@ $$;
 ALTER FUNCTION public.createprogram(description text, relativepath text, owner integer) OWNER TO postgres;
 
 --
--- TOC entry 31 (class 1255 OID 24906)
+-- TOC entry 33 (class 1255 OID 24906)
 -- Dependencies: 6 357
 -- Name: createuser(text, text, text, text, text, text); Type: FUNCTION; Schema: public; Owner: postgres
 --
@@ -196,7 +196,7 @@ BEGIN
 		
 		INSERT INTO "User"("UserName", "Password", "Name", "LastName1",
 		"LastName2", "RoleId")
-		VALUES(username, password, name, lastname1, lastname2, roleid);
+		VALUES(username, md5(password), name, lastname1, lastname2, roleid);
 
 		SELECT "UserId" INTO userId FROM "User" WHERE "UserName" = username;
 		return userId;
@@ -210,7 +210,7 @@ $$;
 ALTER FUNCTION public.createuser(username text, password text, name text, lastname1 text, lastname2 text, role text) OWNER TO postgres;
 
 --
--- TOC entry 33 (class 1255 OID 24917)
+-- TOC entry 32 (class 1255 OID 24917)
 -- Dependencies: 355 6
 -- Name: getallusers(); Type: FUNCTION; Schema: public; Owner: postgres
 --
@@ -251,7 +251,7 @@ ALTER TABLE public."Application" OWNER TO postgres;
 
 --
 -- TOC entry 20 (class 1255 OID 24700)
--- Dependencies: 323 6
+-- Dependencies: 6 323
 -- Name: getapplications(integer); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -298,7 +298,7 @@ COMMENT ON COLUMN "Experiment"."ExecutablePath" IS 'We''re adding this just in c
 
 --
 -- TOC entry 24 (class 1255 OID 24708)
--- Dependencies: 326 6
+-- Dependencies: 6 326
 -- Name: getexperimentgeneralinfo(integer); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -379,7 +379,7 @@ COMMENT ON COLUMN "ExecutionStatistics"."UsedMemory" IS 'In MB';
 
 --
 -- TOC entry 25 (class 1255 OID 24713)
--- Dependencies: 329 6
+-- Dependencies: 6 329
 -- Name: getexperimentstatistics(integer); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -459,7 +459,7 @@ ALTER TABLE public."ParameterType" OWNER TO postgres;
 
 --
 -- TOC entry 26 (class 1255 OID 24845)
--- Dependencies: 6 344
+-- Dependencies: 344 6
 -- Name: getparametertypes(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -489,7 +489,7 @@ ALTER TABLE public."Role" OWNER TO postgres;
 
 --
 -- TOC entry 30 (class 1255 OID 24852)
--- Dependencies: 6 347
+-- Dependencies: 347 6
 -- Name: getusertypes(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -503,7 +503,7 @@ CREATE FUNCTION getusertypes() RETURNS SETOF "Role"
 ALTER FUNCTION public.getusertypes() OWNER TO postgres;
 
 --
--- TOC entry 32 (class 1255 OID 24915)
+-- TOC entry 31 (class 1255 OID 24915)
 -- Dependencies: 6 355
 -- Name: login(text, text); Type: FUNCTION; Schema: public; Owner: postgres
 --
@@ -521,7 +521,7 @@ ALTER FUNCTION public.login(username text, password text) OWNER TO postgres;
 
 --
 -- TOC entry 23 (class 1255 OID 24722)
--- Dependencies: 357 6
+-- Dependencies: 6 357
 -- Name: saveexecution(timestamp without time zone, timestamp without time zone, integer, real, interval); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -907,7 +907,7 @@ ALTER SEQUENCE "User_UserId_seq" OWNED BY "User"."UserId";
 -- Name: User_UserId_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"User_UserId_seq"', 14, true);
+SELECT pg_catalog.setval('"User_UserId_seq"', 16, true);
 
 
 --
@@ -1281,7 +1281,7 @@ GRANT ALL ON SCHEMA public TO postgres;
 GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
--- Completed on 2011-04-24 11:06:06 CST
+-- Completed on 2011-04-24 11:22:19 CST
 
 --
 -- PostgreSQL database dump complete
