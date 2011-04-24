@@ -22,7 +22,7 @@
                 this.document.getElementById('displayFrame').setAttribute('src', address);
             }
         </script>
-        <link href="styles/HpcStyles.css" rel="Stylesheet" type="text/css" />
+        <link href="/Hpca/styles/HpcStyles.css" rel="Stylesheet" type="text/css" />
     </head>
     <body>
         <table style="width: 100%;">
