@@ -5,7 +5,6 @@
 
 package experiments;
 
-import common.LinuxUtilities;
 import files.DirectoryManager;
 import java.io.IOException;
 import model.Experiment;
