@@ -21,7 +21,7 @@ import model.ExperimentExecution;
 import model.ExperimentParameter;
 import model.UserExperimentMapping;
 import controller.Constants;
-import files.LinuxUtilities;
+import common.LinuxUtilities;
 
 /**
  * This class is responsible for all tasks related to experiments, such as creating new ones,

@@ -34,7 +34,6 @@ public class ProcessVerifier extends Thread
         try
         {
             process.waitFor();
-            System.out.println("HOLA MUNDO!");
             ExperimentObservable expObs = (ExperimentObservable) obs;
             expObs.NotifiyExperimentManager(usrExpMap);
         }

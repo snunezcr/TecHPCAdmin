@@ -3,11 +3,9 @@
  * and open the template in the editor.
  */
 
-package files;
+package common;
 
-import common.CommonFunctions;
-import common.ServiceResult;
-import java.lang.Runtime;
+import java.lang.reflect.Field;
 
 /**
  * This class contains operating system depending functions, that cannot be done otherwise because
@@ -57,6 +55,23 @@ public class LinuxUtilities {
         {
             return CommonFunctions.CreateErrorServiceResult(ex);
         }
+    }
+
+    public int GetUnixProcessPid(Process process)
+    {
+        if(process.getClass().getName().equals("java.lang.UNIXProcess"))
+        {
+            //(java.lang.UNIXProcess)
+            try
+            {
+                Field field = process.getClass().getDeclaredField("pid");
+                field.setAccessible(true);
+                int pid = field.getInt(process);
+                return pid;
+            }
+            catch (Throwable ex) { }
+        }
+        return -1;
     }
 
 }
