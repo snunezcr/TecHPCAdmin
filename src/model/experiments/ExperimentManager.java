@@ -66,13 +66,10 @@ public class ExperimentManager implements Observer
                 ExperimentExecutor executor = userHash.get(usrExpMap.getExpId());
                 Experiment finishedExperiment = executor.getExecutedExperiment();
                 finishedExperiment.setExecutionStatus(Experiment.ExecStatus.Stopped);
-                Date startDate = executor.getStartDate();
-                Date endDate = new Date();
                 try
                 {
-                    String outputPath = executor.GenerateExperimentOutput(usrExpMap.getUserId());
-                    ExperimentExecution execution = new ExperimentExecution(
-                            startDate, endDate, outputPath);
+                    ExperimentExecution execution = executor.GenerateExperimentExecution(
+                            usrExpMap.getUserId());
                     int result = dataManager.SaveExperimentExecution(execution,
                             finishedExperiment.getId());                    
                     finishedExperiment.AddExecutionHistory(execution);

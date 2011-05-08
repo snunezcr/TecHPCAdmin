@@ -11,11 +11,6 @@ package db;
  */
 public class Constants {
 
-    public static final String ConfigurationFilePath = "/etc/hpca/hpca.conf";
-    public static final String ConfigNodes = "Nodes";
-    public static final String ConfigDefaultNodes = "DefaultNodes";
-    public static final String ConfigDataPath = "UsersDataPath";
-
     // Data info messages
     // -------------------------------------------------------------------------
     public static final String ExperimentLoadError = "Problemas de conexión en el sistema para"
@@ -142,6 +137,9 @@ public class Constants {
     public static final String ExpStatsColOutputPath = "OutputPath";
     public static final String ExpStatsColStartDate = "StartDateTime";
     public static final String ExpStatsColFinishDate = "FinishDateTime";
+    public static final String ExpStatsColUsedMemory = "UsedMemory";
+    public static final String ExpStatsColWallClockTime = "WallClockTime";
+    public static final String ExpStatsColCPUUsage = "CPUUsage";
 
     // Get parallel configuration
     // -------------------------------------------------------------------------
@@ -161,5 +159,6 @@ public class Constants {
     public static final int SaveExecParamUsedMemory = 4;
     public static final int SaveExecParamWallCLockTime = 5;
     public static final int SaveExecParamOutputFilePath = 6;
+    public static final int SaveExecParamCPUUsage = 7;
 
 }

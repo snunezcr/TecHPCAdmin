@@ -4,7 +4,9 @@
  */
 
 package experiments;
+import common.LinuxUtilities;
 import java.util.Observable;
+import java.util.Timer;
 import model.UserExperimentMapping;
 
 /**
@@ -18,6 +20,7 @@ public class ProcessVerifier extends Thread
     private Process process;
     private Observable obs;
     private UserExperimentMapping usrExpMap;
+    private StatisticsGenerator gen;
 
     // Constructor
     // -------------------------------------------------------------------------
@@ -33,7 +36,13 @@ public class ProcessVerifier extends Thread
     {
         try
         {
+            gen = new StatisticsGenerator(
+                    LinuxUtilities.GetInstance().GetUnixProcessPid(process));
+            Timer statsTimer = new Timer();
+            long oneSecond = 1000;
+            statsTimer.scheduleAtFixedRate(gen, 0, oneSecond);
             process.waitFor();
+            statsTimer.cancel();
             ExperimentObservable expObs = (ExperimentObservable) obs;
             expObs.NotifiyExperimentManager(usrExpMap);
         }
@@ -41,5 +50,26 @@ public class ProcessVerifier extends Thread
         {
             process.destroy();
         }
+    }
+
+    public float getCPUUsagePercentage()
+    {
+        if(gen != null)
+            return gen.getCPUUsagePercentage();
+        else return 0;
+    }
+
+    public float getUsedMemoryPercentage()
+    {
+        if(gen != null)
+            return gen.getUsedMemoryPercentage();
+        else return 0;
+    }
+
+    public int getCPUTimeSeconds()
+    {
+        if(gen != null)
+            return gen.getCPUTimeSeconds();
+        else return 0;
     }
 }

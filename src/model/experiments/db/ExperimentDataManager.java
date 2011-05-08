@@ -169,9 +169,12 @@ public class ExperimentDataManager {
             Date startDate = reader.getDate(Constants.ExpStatsColStartDate);
             Date finishDate = reader.getDate(Constants.ExpStatsColFinishDate);
             String outputPath = reader.getString(Constants.ExpStatsColOutputPath);
+            float cpuUsage = reader.getFloat(Constants.ExpStatsColCPUUsage);
+            float memUsed = reader.getFloat(Constants.ExpStatsColUsedMemory);
+            int wallClockTime = reader.getInt(Constants.ExpStatsColWallClockTime);
 
             ExperimentExecution param = new ExperimentExecution(
-                    startDate, finishDate, outputPath);
+                    startDate, finishDate, outputPath, memUsed, cpuUsage, wallClockTime);
             resultList.add(param);
         }
         dataHelper.CloseConnection(reader);
@@ -186,20 +189,29 @@ public class ExperimentDataManager {
      */
     public int SaveExperimentExecution(ExperimentExecution exec, int expId) throws SQLException
     {
-        SqlParameter[] parameters = new SqlParameter[]{
-                new SqlParameter(Constants.SaveExecParamStartDate, exec.getStartDate()),
-                new SqlParameter(Constants.SaveExecParamFinishDate, exec.getEndDate()),
-                new SqlParameter(Constants.SaveExecParamExpId, expId),
-                //TODO: Llenar con la información estadística real, segunda iteracion
-                new SqlParameter(Constants.SaveExecParamUsedMemory, 0),
-                new SqlParameter(Constants.SaveExecParamWallCLockTime, 0),
-                new SqlParameter(Constants.SaveExecParamOutputFilePath, exec.getOutputPath())
-            };
-        ResultSet reader = dataHelper.ExecuteSP(Constants.SaveExecSp, parameters);
-        //TODO: Obtener el Id del reader
-        Integer resultValue = 0;
-        dataHelper.CloseConnection(reader);
-        return resultValue;
+        try
+        {
+            SqlParameter[] parameters = new SqlParameter[]{
+                    new SqlParameter(Constants.SaveExecParamStartDate, exec.getStartDate()),
+                    new SqlParameter(Constants.SaveExecParamFinishDate, exec.getEndDate()),
+                    new SqlParameter(Constants.SaveExecParamExpId, expId),
+                    new SqlParameter(Constants.SaveExecParamUsedMemory, exec.getUsedMemory()),
+                    new SqlParameter(Constants.SaveExecParamWallCLockTime, 
+                            exec.getCPUTimeSeconds()),
+                    new SqlParameter(Constants.SaveExecParamOutputFilePath, exec.getOutputPath()),
+                    new SqlParameter(Constants.SaveExecParamCPUUsage, exec.getCPUUsage()),
+                };
+            ResultSet reader = dataHelper.ExecuteSP(Constants.SaveExecSp, parameters);
+            //TODO: Obtener el Id del reader
+            Integer resultValue = 0;
+            dataHelper.CloseConnection(reader);
+            return resultValue;
+        }
+        catch(Exception ex)
+        {
+            int esto = 0;
+            return -1;
+        }
     }
     /**
      * Stores a new experiment configuration in the database

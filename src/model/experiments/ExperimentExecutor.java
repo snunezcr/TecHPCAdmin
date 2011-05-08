@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Observable;
 import model.Experiment;
+import model.ExperimentExecution;
 import model.UserExperimentMapping;
 
 /**
@@ -52,7 +53,14 @@ public class ExperimentExecutor {
         return startDate;
     }
 
-    public String GenerateExperimentOutput(final int userId)
+    public ExperimentExecution GenerateExperimentExecution(final int userId)
+    {
+        return new ExperimentExecution(startDate, new Date(),
+                GenerateExperimentOutput(userId), verifier.getUsedMemoryPercentage(),
+                verifier.getCPUUsagePercentage(), verifier.getCPUTimeSeconds());
+    }
+
+    private String GenerateExperimentOutput(final int userId)
     {
         DirectoryManager dirMan = DirectoryManager.GetInstance();
         String baseFilePathname = dirMan.GetPathForExperimentOutput(
