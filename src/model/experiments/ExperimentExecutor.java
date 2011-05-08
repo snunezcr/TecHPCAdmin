@@ -64,7 +64,7 @@ public class ExperimentExecutor {
         GenerateErrorOutputFile(userId, outputDir);
         dirMan.CreateCompressedDir(startTimeText, baseFilePathname);
         dirMan.DeleteFile(outputDir);
-        return baseFilePathname + startTimeText + ".tar.gz";
+        return startTimeText + ".tar.gz";
     }
 
     /**

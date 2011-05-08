@@ -5,6 +5,7 @@
 
 package common;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 
 /**
@@ -57,11 +58,15 @@ public class LinuxUtilities {
         }
     }
 
-    public int GetUnixProcessPid(Process process)
+    /**
+     * Gets the pid of a Linux/Unix process
+     * @param process The Linux/Unix process
+     * @return the pid of the Linux/Unix process
+     */
+    public int GetUnixProcessPid(final Process process)
     {
         if(process.getClass().getName().equals("java.lang.UNIXProcess"))
         {
-            //(java.lang.UNIXProcess)
             try
             {
                 Field field = process.getClass().getDeclaredField("pid");
@@ -72,6 +77,21 @@ public class LinuxUtilities {
             catch (Throwable ex) { }
         }
         return -1;
+    }
+
+    public void UncompressTarFile(final String filePath, final String targetPath)
+            throws IOException, InterruptedException
+    {
+        //Let's check the file extension
+        String extension = filePath.substring(filePath.lastIndexOf(".") + 1).toLowerCase();
+        String uncompressText = "tar -zxvf ";
+        if(extension.equals("bz2"))
+            uncompressText = "tar -xvjf ";
+
+        //Let's uncompress the file
+        String command = uncompressText + filePath + " -C " + targetPath;
+        Process process = Runtime.getRuntime().exec(command);
+        process.waitFor();
     }
 
 }

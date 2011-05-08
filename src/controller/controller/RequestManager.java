@@ -5,9 +5,13 @@
 
 package controller;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.UserBase;
@@ -44,7 +48,8 @@ public class RequestManager {
 
     public static final String MyExperimentsPage = "/Hpca/normal/my-experiments.jsp";
 
-    public static final String MyProgramsPage = "/Hpca/normal/my-programs.jsp";
+    public static final String MyProgramsFullPage = "/Hpca/normal/my-programs.jsp";
+    private static final String MyProgramsPage = "/normal/my-programs.jsp";
 
     public static final String AllUsersFullPage = "/Hpca/administrator/all-users.jsp";
     private static final String AllUsersPage = "/administrator/all-users.jsp";
@@ -76,6 +81,9 @@ public class RequestManager {
 
     private static final String userCreationError = "Se produjo un error al intentar "
             + "crear el usuario.<br />Por favor contacte al administrador del sitio.";
+
+    private static final String programUploadError = "Se produjo un error al intentar "
+            + "subir el programa.";
 
     private static final String loginExistsError = "No se pudo crear el usuario. El login ya está "
             + "en uso";
@@ -125,6 +133,7 @@ public class RequestManager {
             case ExperimentCreationError: return experimentCreationError;
             case UserCreationError: return userCreationError;
             case LoginExists: return loginExistsError;
+            case ProgramCreationError: return programUploadError;
             default: return "";
         }
     }
@@ -172,6 +181,47 @@ public class RequestManager {
         RequestDispatcher dispatcher = request.getRequestDispatcher(path);
         request.setAttribute(errorParam, errorCode);
         dispatcher.forward(request, response);
+    }
+
+    public static void DownloadFile(final HttpServletResponse response, final String path,
+                                    final String fileName)
+    {
+        BufferedInputStream buffer = null;
+        ServletOutputStream pageOutput = null;
+
+        try
+        {
+            pageOutput = response.getOutputStream();
+            File downloadFile = new File(path);
+
+            //set response headers
+            response.setContentType("text/plain");
+
+            response.addHeader("Content-Disposition","attachment; filename=" + fileName);
+
+            response.setContentLength((int)downloadFile.length());
+
+            FileInputStream input = new FileInputStream(downloadFile);
+            buffer = new BufferedInputStream(input);
+            int readBytes = 0;
+
+            //read from the file; write to the ServletOutputStream
+            while((readBytes = buffer.read( )) != -1)
+                pageOutput.write(readBytes);
+
+        }
+        catch (Exception ex){ }
+        finally
+        {
+            try
+            {
+                if (pageOutput != null)
+                    pageOutput.close();
+                if (buffer != null)
+                    buffer.close();
+            }
+            catch(Exception ex) { }
+        }
     }
 
 }

@@ -6,6 +6,8 @@
 package common;
 
 import controller.Constants;
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
@@ -25,14 +27,14 @@ public class CommonFunctions {
         return Constants.BooleanTrueText.equalsIgnoreCase(text);
     }
 
-    public static <T> ServiceResult<T> CreateErrorServiceResult(Exception exception)
+    public static <T> ServiceResult<T> CreateErrorServiceResult(final Exception exception)
     {
         ServiceResult<T> result = new ServiceResult<T>();
         result.AddError(exception.getMessage());
         return result;
     }
 
-    public static <T> ServiceResult<T> CreateErrorServiceResult(ServiceResult original)
+    public static <T> ServiceResult<T> CreateErrorServiceResult(final ServiceResult original)
     {
         ServiceResult<T> result = new ServiceResult<T>();
         for(String errorString : original.getErrors())
@@ -40,11 +42,33 @@ public class CommonFunctions {
         return result;
     }
 
-    public static int LongToMaxInt(long l)
+    public static int LongToMaxInt(final long l)
     {
         if(l > Integer.MAX_VALUE)
             return Integer.MAX_VALUE;
         return (int)l;
+    }
+
+    public static String[] ListExtensionFiles(final String path, final String extension)
+    {
+        File dir = new File(path);
+        FilenameFilter fileFilter = new FilenameFilter() {
+            public boolean accept(File file, String string) {
+                return string.toLowerCase().endsWith(extension);
+            }
+        };
+        return dir.list(fileFilter);
+    }
+
+    public static String[] SearchFile(final String path, final String name)
+    {
+        File dir = new File(path);
+        FilenameFilter fileFilter = new FilenameFilter() {
+            public boolean accept(File file, String string) {
+                return string.toLowerCase().endsWith(name);
+            }
+        };
+        return dir.list(fileFilter);
     }
 
     public static String GetDateText(final Date date)

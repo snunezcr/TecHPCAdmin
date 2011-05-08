@@ -74,6 +74,11 @@ public class DirectoryManager {
         return GetPathForUser(userId) + "bin/";
     }
 
+    public String GetCodePath(final int userId)
+    {
+        return GetPathForUser(userId) + "data/";
+    }
+
     public ServiceResult<Boolean> CreateExperimentsStructure(final int userId,
                                                              final int experimentId)
     {

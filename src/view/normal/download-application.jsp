@@ -4,9 +4,7 @@
     Author     : rdinarte
 --%>
 
-<%@page import="java.io.FileInputStream"%>
-<%@page import="java.io.File"%>
-<%@page import="java.io.BufferedInputStream"%>
+<%@page import="controller.RequestManager"%>
 <%@page import="model.Application"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="common.ServiceResult"%>
@@ -14,6 +12,8 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
 
+    if(!RequestManager.VerifyLogin(request, response)) return;
+    
     HpcaServiceAgent agent = new HpcaServiceAgent();
     String basePath = agent.GetApplicationsPath(request);
     ServiceResult<HashMap<Integer, Application>> result = agent.GetUsersApplications(request);
@@ -29,40 +29,10 @@
     if(appId > 0 && result.getStatus() != ServiceResult.OperationResult.Error
             && applications.containsKey(appId))
     {
-        BufferedInputStream buffer = null;
-        ServletOutputStream pageOutput = null;
-
-        try
-        {
-            pageOutput = response.getOutputStream();
-            String fileName = applications.get(appId).getRelativePath();
-            File downloadFile = new File(basePath + fileName);
-
-            //set response headers
-            response.setContentType("text/plain");
-
-            fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
-            response.addHeader("Content-Disposition","attachment; filename=" + fileName);
-
-            response.setContentLength((int)downloadFile.length());
-
-            FileInputStream input = new FileInputStream(downloadFile);
-            buffer = new BufferedInputStream(input);
-            int readBytes = 0;
-
-            //read from the file; write to the ServletOutputStream
-            while((readBytes = buffer.read( )) != -1)
-                pageOutput.write(readBytes);
-
-        }
-        catch (Exception ex){ }
-        finally
-        {
-            if (pageOutput != null)
-                pageOutput.close();
-            if (buffer != null)
-                buffer.close();
-        }
+        String fileName = applications.get(appId).getRelativePath();
+        basePath += fileName;
+        fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
+        RequestManager.DownloadFile(response, basePath, fileName);
     }
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
@@ -74,6 +44,5 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
     </body>
 </html>

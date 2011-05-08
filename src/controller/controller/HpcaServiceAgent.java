@@ -128,7 +128,7 @@ public class HpcaServiceAgent {
 
     /**
      * Uploads a program an stores its metadata
-     * @param request
+     * @param request The request of the page that is invoking this method
      * @param application The application's metadata
      * @param inputFile The program that is being uploaded
      * @return A value indicating whether the operation was successful or not
@@ -140,8 +140,56 @@ public class HpcaServiceAgent {
         return ApplicationManager.GetInstance().CreateProgram(application, userId, inputFile);
     }
 
+    /**
+     * Installs a program from a compressed file or a script file
+     * @param request The request of the page that is invoking this method
+     * @param description The description of the installed program
+     * @param folder The folder where the program will be stored
+     * @param fileName The name of the installer file
+     * @param fileContent The binary content of the installer file
+     * @return True if the program could be installed, otherwise false
+     */
+    public ServiceResult<Boolean> InstallProgram(final HttpServletRequest request,
+            final String description, final String folder, final String fileName,
+            final byte[] fileContent)
+    {
+        int userId = SessionManager.GetUserId(request);
+        return ApplicationManager.GetInstance()
+                .InstallProgram(userId, description, folder, fileName, fileContent);
+    }
+
+    /**
+     * Installs a program from a repository
+     * @param request The request of the page that is invoking this method
+     * @param description The description of the installed program
+     * @param folder The folder where the program will be stored
+     * @param repository The repository from which the installation is done (CVS, SVN or github)
+     * @param url The url of the repository
+     * @return True if the program could be installed, otherwise false
+     */
+    public ServiceResult<Boolean> InstallProgram(final HttpServletRequest request,
+            final String description, final String folder, final String repository,
+            final String url)
+    {
+        int userId = SessionManager.GetUserId(request);
+        return ApplicationManager.GetInstance()
+                .InstallProgram(userId, description, folder, repository, url);
+    }
+
     // Experiment methods
     // -------------------------------------------------------------------------
+    /**
+     * Gets the path in which an experiment stores it's output
+     * @param request The request of the page that is invoking this function
+     * @param experimentId The id of the experiment
+     * @return the path in which an experiment stores it's output
+     */
+    public String GetExperimentsOutputPath(final HttpServletRequest request, final int experimentId)
+    {
+        int userId = SessionManager.GetUserId(request);
+        return DirectoryManager.GetInstance().GetPathForExperimentOutput(userId, experimentId);
+    }
+
     /**
      * Creates a new experiment
      * @param experiment The experiment that will be created

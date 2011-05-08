@@ -48,7 +48,7 @@ public class srvUploadProgram extends HttpServlet {
         {//The program was uploaded without errors
             //Let's empty the cache
             SessionManager.SetApplications(request, null);
-            response.sendRedirect(RequestManager.MyProgramsPage);
+            response.sendRedirect(RequestManager.MyProgramsFullPage);
         }
         else //An error occured, inform the user
             RequestManager.SendProgramCreationError(request, response);
