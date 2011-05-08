@@ -134,6 +134,7 @@ public class Constants {
     // -------------------------------------------------------------------------
     public static final String ExpStatsSp = "GetExperimentStatistics";
     public static final int ExpStatsParamExpId = 1;
+    public static final String ExpStatsColOutputPath = "OutputPath";
     public static final String ExpStatsColStartDate = "StartDateTime";
     public static final String ExpStatsColFinishDate = "FinishDateTime";
 
@@ -154,5 +155,6 @@ public class Constants {
     public static final int SaveExecParamExpId = 3;
     public static final int SaveExecParamUsedMemory = 4;
     public static final int SaveExecParamWallCLockTime = 5;
+    public static final int SaveExecParamOutputFilePath = 6;
 
 }

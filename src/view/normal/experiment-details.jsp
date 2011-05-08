@@ -131,7 +131,7 @@
                             + "target='_blank'>Ver</a></td>"
                 + "<td align='center'><a href='Estadisticas.rar' "
                             + "target='_blank'>Descargar</a></td>"
-                + "<td align='center'><a href='Resultados.rar' "
+                + "<td align='center'><a href='" + execution.getOutputPath() + "' "
                             + "target='_blank'>Descargar</a></td>"
                 + "</tr>";
         }

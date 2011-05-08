@@ -74,7 +74,7 @@ public class ConfigurationManager {
         data = new EnumMap(ConfigurationOptions.class);
         data.put(ConfigurationOptions.NumberOfNodesForExecution, 10);
         data.put(ConfigurationOptions.DefaultNumberOfClusterNodes, 4);
-        data.put(ConfigurationOptions.PathForUsersData, "/home/grupo13/users/");
+        data.put(ConfigurationOptions.PathForUsersData, "/home/cfernandez/Documents/HPCADirectory/");
     }
 
 }

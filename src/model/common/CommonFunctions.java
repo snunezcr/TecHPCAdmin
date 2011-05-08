@@ -6,6 +6,8 @@
 package common;
 
 import controller.Constants;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 /**
  * Contains some commonly used functions
@@ -43,6 +45,12 @@ public class CommonFunctions {
         if(l > Integer.MAX_VALUE)
             return Integer.MAX_VALUE;
         return (int)l;
+    }
+
+    public static String GetDateText(final Date date)
+    {
+        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy-hh:mm:ss");
+        return format.format(date);
     }
 
 }

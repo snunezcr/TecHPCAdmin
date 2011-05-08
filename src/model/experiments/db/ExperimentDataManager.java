@@ -168,9 +168,10 @@ public class ExperimentDataManager {
         {
             Date startDate = reader.getDate(Constants.ExpStatsColStartDate);
             Date finishDate = reader.getDate(Constants.ExpStatsColFinishDate);
+            String outputPath = reader.getString(Constants.ExpStatsColOutputPath);
 
             ExperimentExecution param = new ExperimentExecution(
-                    startDate, finishDate);
+                    startDate, finishDate, outputPath);
             resultList.add(param);
         }
         dataHelper.CloseConnection(reader);
@@ -191,7 +192,8 @@ public class ExperimentDataManager {
                 new SqlParameter(Constants.SaveExecParamExpId, expId),
                 //TODO: Llenar con la información estadística real, segunda iteracion
                 new SqlParameter(Constants.SaveExecParamUsedMemory, 0),
-                new SqlParameter(Constants.SaveExecParamWallCLockTime, 0)
+                new SqlParameter(Constants.SaveExecParamWallCLockTime, 0),
+                new SqlParameter(Constants.SaveExecParamOutputFilePath, exec.getOutputPath())
             };
         ResultSet reader = dataHelper.ExecuteSP(Constants.SaveExecSp, parameters);
         //TODO: Obtener el Id del reader

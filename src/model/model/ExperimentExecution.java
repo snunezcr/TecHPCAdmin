@@ -16,10 +16,11 @@ public class ExperimentExecution
     // -------------------------------------------------------------------------
     private Date startDate;
     private Date endDate;
+    private String outputFilePath;
 
     // Constructor
     // -------------------------------------------------------------------------
-    public ExperimentExecution(Date startDate, Date endDate) 
+    public ExperimentExecution(Date startDate, Date endDate, String outputFilePath)
     {
         /* Para string:
             import java.text.SimpleDateFormat;
@@ -29,6 +30,7 @@ public class ExperimentExecution
          */
         this.startDate = startDate;
         this.endDate = endDate;
+        this.outputFilePath = outputFilePath;
     }
 
     /**
@@ -45,6 +47,14 @@ public class ExperimentExecution
      */
     public Date getStartDate() {
         return startDate;
+    }
+
+    /**
+     * Returns the file path of the experiment execution output
+     * @return Execution start date
+     */
+    public String getOutputPath() {
+        return outputFilePath;
     }
 
 

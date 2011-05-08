@@ -9,6 +9,7 @@ import common.CommonFunctions;
 import common.ServiceResult;
 import config.ConfigurationManager;
 import java.io.File;
+import java.io.IOException;
 import model.UserBase;
 
 /**
@@ -52,7 +53,20 @@ public class DirectoryManager {
 
     public String GetPathForExperimentExecution(final int userId, final int experimentId)
     {
-        return GetPathForUser(userId) + "experiments/" + Integer.toString(experimentId) + "/bin/";
+        return GetPathForUser(userId) + "experiments/" + Integer.toString(experimentId) +
+                "/bin/";
+    }
+
+    public String GetPathForExperimentStats(final int userId, final int experimentId)
+    {
+        return GetPathForUser(userId) + "experiments/" + Integer.toString(experimentId) +
+                "/stats/";
+    }
+
+    public String GetPathForExperimentOutput(final int userId, final int experimentId)
+    {
+        return GetPathForUser(userId) + "experiments/" + Integer.toString(experimentId) +
+                "/log/";
     }
 
     public String GetApplicationsPath(final int userId)
@@ -101,6 +115,35 @@ public class DirectoryManager {
     public boolean CreateDirectory(String path)
     {
         return new File(path).mkdirs();
+    }
+
+    public boolean DeleteFile(final String fileName)
+    {
+        try
+        {
+            String compressCommand = "rm -r " + fileName;
+            Runtime.getRuntime().exec(compressCommand);
+            return true;
+        }
+        catch(IOException ex)
+        {
+            return false;
+        }
+    }
+
+    public boolean CreateCompressedDir(final String fileName, final String sourcePath)
+    {
+        try
+        {
+            String compressCommand = "tar -zcvf " + sourcePath + fileName + ".tar.gz -C " +
+                    sourcePath + " " + fileName;
+            Runtime.getRuntime().exec(compressCommand);
+            return true;
+        }
+        catch(IOException ex)
+        {
+            return false;
+        }
     }
 
 }
