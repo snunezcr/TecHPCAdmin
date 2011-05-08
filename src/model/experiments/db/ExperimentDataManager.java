@@ -11,12 +11,14 @@ import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import model.Experiment;
 import model.ExperimentBase;
 import model.ExperimentParameter;
 import model.ExperimentExecution;
 import model.FolderStructure;
+import model.NodeStatistics;
 
 /**
  * This class do all the database operations related to experiments, it's an auxiliar class to
@@ -157,15 +159,16 @@ public class ExperimentDataManager {
      * @param expId Unique id of the experiment
      * @return A list with all the historical executions of the experiment.
      */
-    public ExperimentExecution[] GetExperimentExecs(int expId) throws SQLException
+    public HashMap<Integer, ExperimentExecution> GetExperimentExecs(int expId) throws SQLException
     {
         SqlParameter[] parameters = new SqlParameter[]{
                 new SqlParameter(Constants.ExpStatsParamExpId, expId),
             };
         ResultSet reader = dataHelper.ExecuteSP(Constants.ExpStatsSp, parameters);
-        LinkedList<ExperimentExecution> resultList = new LinkedList<ExperimentExecution>();
+        HashMap<Integer, ExperimentExecution> result = new HashMap<Integer, ExperimentExecution>();
         while(reader.next())
         {
+            int id = reader.getInt(Constants.ExpStatsColId);
             Date startDate = reader.getDate(Constants.ExpStatsColStartDate);
             Date finishDate = reader.getDate(Constants.ExpStatsColFinishDate);
             String outputPath = reader.getString(Constants.ExpStatsColOutputPath);
@@ -174,11 +177,37 @@ public class ExperimentDataManager {
             int wallClockTime = reader.getInt(Constants.ExpStatsColWallClockTime);
 
             ExperimentExecution param = new ExperimentExecution(
-                    startDate, finishDate, outputPath, memUsed, cpuUsage, wallClockTime);
-            resultList.add(param);
+                    id, startDate, finishDate, outputPath, memUsed, cpuUsage, wallClockTime);
+            result.put(id, param);
         }
         dataHelper.CloseConnection(reader);
-        return resultList.toArray(new ExperimentExecution[resultList.size()]);
+        return result;
+    }
+
+    /**
+     * Gets the statistics for each node for an specific execution
+     * @param executionId The execution id
+     * @return The nodes statistics
+     * @throws SQLException if the SP couldn't be executed
+     */
+    public NodeStatistics[] GetNodeStats(int executionId) throws SQLException
+    {
+        SqlParameter[] parameters = new SqlParameter[]{
+                new SqlParameter(Constants.NodeStatsParamExpId, executionId),
+            };
+        ResultSet reader = dataHelper.ExecuteSP(Constants.NodeStatsSp, parameters);
+        LinkedList<NodeStatistics> result = new LinkedList<NodeStatistics>();
+        while(reader.next())
+        {
+            int number = reader.getInt(Constants.NodeStatsColNumber);
+            int totalTime = reader.getInt(Constants.NodeStatsColTime);
+            float memory = reader.getFloat(Constants.NodeStatsColMemory);
+            float cpu = reader.getFloat(Constants.NodeStatsColCpu);
+            NodeStatistics stats = new NodeStatistics(number, totalTime, memory, cpu);
+            result.add(stats);
+        }
+        dataHelper.CloseConnection(reader);
+        return result.toArray(new NodeStatistics[result.size()]);
     }
 
     /**
@@ -209,10 +238,10 @@ public class ExperimentDataManager {
         }
         catch(Exception ex)
         {
-            int esto = 0;
             return -1;
         }
     }
+
     /**
      * Stores a new experiment configuration in the database
      * @param userId The id of the owner of the experiment

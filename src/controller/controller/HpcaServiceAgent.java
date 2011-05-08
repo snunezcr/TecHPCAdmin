@@ -18,6 +18,7 @@ import model.Application;
 import model.ApplicationBase;
 import model.Experiment;
 import model.ExperimentBase;
+import model.NodeStatistics;
 import model.User;
 import model.UserBase;
 import security.SecurityManager;
@@ -188,6 +189,16 @@ public class HpcaServiceAgent {
     {
         int userId = SessionManager.GetUserId(request);
         return DirectoryManager.GetInstance().GetPathForExperimentOutput(userId, experimentId);
+    }
+
+    /**
+     * Gets the statistics for each node for an specific execution
+     * @param executionId The execution id
+     * @return The nodes statistics
+     */
+    public ServiceResult<NodeStatistics[]> GetNodeStats(int executionId)
+    {
+        return ExperimentManager.GetInstance().GetNodeStats(executionId);
     }
 
     /**

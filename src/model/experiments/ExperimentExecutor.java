@@ -55,7 +55,7 @@ public class ExperimentExecutor {
 
     public ExperimentExecution GenerateExperimentExecution(final int userId)
     {
-        return new ExperimentExecution(startDate, new Date(),
+        return new ExperimentExecution(-1, startDate, new Date(),
                 GenerateExperimentOutput(userId), verifier.getUsedMemoryPercentage(),
                 verifier.getCPUUsagePercentage(), verifier.getCPUTimeSeconds());
     }
