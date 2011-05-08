@@ -11,6 +11,11 @@ package db;
  */
 public class Constants {
 
+    public static final String ConfigurationFilePath = "/etc/hpca/hpca.conf";
+    public static final String ConfigNodes = "Nodes";
+    public static final String ConfigDefaultNodes = "DefaultNodes";
+    public static final String ConfigDataPath = "UsersDataPath";
+
     // Data info messages
     // -------------------------------------------------------------------------
     public static final String ExperimentLoadError = "Problemas de conexión en el sistema para"

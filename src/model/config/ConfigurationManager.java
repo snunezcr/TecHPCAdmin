@@ -5,6 +5,7 @@
 
 package config;
 
+import config.io.ConfigurationDataManager;
 import java.util.EnumMap;
 
 /**
@@ -29,7 +30,14 @@ public class ConfigurationManager {
     // -------------------------------------------------------------------------
     private ConfigurationManager()
     {
-        LoadData();
+        try
+        {
+            LoadData();
+        }
+        catch(Exception ex)
+        {//If we couldn't load the data we want to cause an exception
+            data = null;
+        }
     }
 
     // Class methods
@@ -45,7 +53,7 @@ public class ConfigurationManager {
 
     // Instance methods
     // -------------------------------------------------------------------------
-/**
+    /**
      * Gets the number of nodes that can be used for execution in the cluster
      * @return The number of nodes that can be used for execution in the cluster
      */
@@ -68,13 +76,13 @@ public class ConfigurationManager {
         return (String)data.get(ConfigurationOptions.PathForUsersData);
     }
 
-    public void LoadData()
+    public void LoadData() throws Exception
     {
-        //TODO: Hacer este metodo
+        ConfigurationDataManager dataManager = new ConfigurationDataManager();
         data = new EnumMap(ConfigurationOptions.class);
-        data.put(ConfigurationOptions.NumberOfNodesForExecution, 10);
-        data.put(ConfigurationOptions.DefaultNumberOfClusterNodes, 4);
-        data.put(ConfigurationOptions.PathForUsersData, "/home/cfernandez/Documents/HPCADirectory/");
+        data.put(ConfigurationOptions.NumberOfNodesForExecution, dataManager.GetNodes());
+        data.put(ConfigurationOptions.DefaultNumberOfClusterNodes, dataManager.GetDefaultNodes());
+        data.put(ConfigurationOptions.PathForUsersData, dataManager.GetUsersPath());
     }
 
 }
