@@ -5,6 +5,7 @@
 
 package controller;
 
+import common.CommonFunctions;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,6 +15,9 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import model.Experiment;
+import model.ExperimentExecution;
+import model.NodeStatistics;
 import model.UserBase;
 
 /**
@@ -222,6 +226,92 @@ public class RequestManager {
             }
             catch(Exception ex) { }
         }
+    }
+
+    public static void DownloadStatistics(final HttpServletResponse response,
+            final Experiment experiment, final ExperimentExecution execution,
+            final NodeStatistics[] nodes, final String fileName)
+    {
+
+        ServletOutputStream pageOutput = null;
+
+        try
+        {
+            pageOutput = response.getOutputStream();
+
+            //set response headers
+            response.setContentType("text/plain");
+
+            response.addHeader("Content-Disposition","attachment; filename=Statistics");
+
+            int length = 0;
+            String tempString = "Estadisticas para ejecución del experimento "
+                    + experiment.getName();
+            length += addContent(pageOutput, tempString);
+
+            length += addContent(pageOutput, "");
+
+            tempString = "Fecha de inicio: "
+                    + CommonFunctions.GetDateText(execution.getStartDate());
+            length += addContent(pageOutput, tempString);
+
+            tempString = "Fecha de fin: " + CommonFunctions.GetDateText(execution.getEndDate());
+            length += addContent(pageOutput, tempString);
+
+            tempString = "Tiempo total del CPU (en segundos): "
+                    + Integer.toString(execution.getCPUTimeSeconds());
+            length += addContent(pageOutput, tempString);
+
+            tempString = "Memoria utilizada : " + Float.toString(execution.getUsedMemory()) + "MB";
+            length += addContent(pageOutput, tempString);
+
+            tempString = "Uso del CPU : " + Float.toString(execution.getCPUUsage()) + "%";
+            length += addContent(pageOutput, tempString);
+
+            if(nodes.length > 0)
+            {
+                length += addContent(pageOutput, "");
+                length += addContent(pageOutput, "");
+                tempString = "Estadisticas paras los nodos:";
+                length += addContent(pageOutput, tempString);
+                for(NodeStatistics node : nodes)
+                {
+                    length += addContent(pageOutput, "");
+
+                    tempString = "Nodo " + Integer.toString(node.getNodeNumber());
+                    length += addContent(pageOutput, tempString);
+
+                    tempString = "Tiempo total del CPU (en segundos): "
+                            + Integer.toString(node.getTotalTime());
+                    length += addContent(pageOutput, tempString);
+
+                    tempString = "Memoria utilizada : "
+                            + Float.toString(node.getUsedMemory()) + "MB";
+                    length += addContent(pageOutput, tempString);
+
+                    tempString = "Uso del CPU : " 
+                            + Float.toString(node.getCpuUsage()) + "%";
+                    length += addContent(pageOutput, tempString);
+                }
+            }
+            response.setContentLength(length);
+        }
+        catch (Exception ex){ }
+        finally
+        {
+            try
+            {
+                if (pageOutput != null)
+                    pageOutput.close();
+            }
+            catch(Exception ex) { }
+        }
+    }
+
+    private static int addContent(final ServletOutputStream pageOutput, String text) throws Exception
+    {
+        pageOutput.println(text);
+        return text.length() + 2;
     }
 
 }

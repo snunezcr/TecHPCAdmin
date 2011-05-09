@@ -14,6 +14,7 @@ public class ExperimentExecution
 {
     // Attributes
     // -------------------------------------------------------------------------
+    private int executionId;
     private Date startDate;
     private Date endDate;
     private String outputFilePath;
@@ -23,10 +24,11 @@ public class ExperimentExecution
 
     // Constructor
     // -------------------------------------------------------------------------
-    public ExperimentExecution(final Date startDate, final Date endDate,
+    public ExperimentExecution(final int executionId, final Date startDate, final Date endDate,
             final String outputFilePath, final float usedMemoryPercentage,
             final float cpuUsagePercentage, final int cpuTimeSeconds)
     {
+        this.executionId = executionId;
         this.startDate = startDate;
         this.endDate = endDate;
         this.outputFilePath = outputFilePath;
@@ -82,4 +84,14 @@ public class ExperimentExecution
     public int getCPUTimeSeconds() {
         return cpuTimeSeconds;
     }
+
+    /**
+     * Returns the id of the execution
+     * @return The id of the execution
+     */
+    public int getExecutionId() {
+        return executionId;
+    }
+
+
 }

@@ -22,6 +22,8 @@ import model.ExperimentParameter;
 import model.UserExperimentMapping;
 import controller.Constants;
 import common.LinuxUtilities;
+import java.util.Collection;
+import model.NodeStatistics;
 
 /**
  * This class is responsible for all tasks related to experiments, such as creating new ones,
@@ -170,6 +172,22 @@ public class ExperimentManager implements Observer
     }
 
     /**
+     * Gets the statistics for each node for an specific execution
+     * @param executionId The execution id
+     * @return The nodes statistics
+     */
+    public ServiceResult<NodeStatistics[]> GetNodeStats(int executionId)
+    {
+        try
+        {
+            return new ServiceResult<NodeStatistics[]>(dataManager.GetNodeStats(executionId));
+        }
+        catch(Exception ex)
+        {
+            return CommonFunctions.CreateErrorServiceResult(ex);
+        }
+    }
+    /**
      * Retrieves all the experiments that were configured by a user
      * @param userId The id of the owner of the experiments
      * @return A list with all the experiment configurations
@@ -182,7 +200,8 @@ public class ExperimentManager implements Observer
             for(Experiment exp : result)
             {
                 ExperimentParameter[] paramsResult = dataManager.GetExperimentParams(exp.getId());
-                ExperimentExecution[] historyResult = dataManager.GetExperimentExecs(exp.getId());
+                Collection<ExperimentExecution> historyResult =
+                        dataManager.GetExperimentExecs(exp.getId()).values();
                 for(ExperimentParameter param : paramsResult)
                     exp.AddParameter(param);
                 for(ExperimentExecution exec : historyResult)

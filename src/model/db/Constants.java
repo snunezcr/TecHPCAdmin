@@ -139,12 +139,22 @@ public class Constants {
     // -------------------------------------------------------------------------
     public static final String ExpStatsSp = "GetExperimentStatistics";
     public static final int ExpStatsParamExpId = 1;
+    public static final String ExpStatsColId = "ExecutionId";
     public static final String ExpStatsColOutputPath = "OutputPath";
     public static final String ExpStatsColStartDate = "StartDateTime";
     public static final String ExpStatsColFinishDate = "FinishDateTime";
     public static final String ExpStatsColUsedMemory = "UsedMemory";
     public static final String ExpStatsColWallClockTime = "WallClockTime";
     public static final String ExpStatsColCPUUsage = "CPUUsage";
+
+    // Get node statistics
+    // -------------------------------------------------------------------------
+    public static final String NodeStatsSp = "GetNodeStatistics";
+    public static final int NodeStatsParamExpId = 1;
+    public static final String NodeStatsColNumber = "NodeNumber";
+    public static final String NodeStatsColTime = "TotalTime";
+    public static final String NodeStatsColMemory = "UsedMemory";
+    public static final String NodeStatsColCpu = "CpuUsage";
 
     // Get parallel configuration
     // -------------------------------------------------------------------------
