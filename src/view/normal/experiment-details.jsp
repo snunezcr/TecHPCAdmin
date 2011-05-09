@@ -129,7 +129,7 @@
                             + "</td> "
                 + "<td align='center'><a href='ExperimentStatistics.htm' "
                             + "target='_blank'>Ver</a></td>"
-                + "<td align='center'><a href='Estadisticas.rar' "
+                + "<td align='center'><a href='download-stats.jsp?" + Constants.ExperimentId + "=" + expId + "&exec=" + execution.getExecutionId() + "' "
                             + "target='_blank'>Descargar</a></td>"
                 + "<td align='center'><a href='download-log.jsp?" + Constants.ExperimentId + "=" + expId + "&file=" + execution.getOutputPath() + "' "
                             + "target='_blank'>Descargar</a></td>"

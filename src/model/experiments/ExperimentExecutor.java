@@ -58,7 +58,7 @@ public class ExperimentExecutor {
         if(executedExperiment.usesParallelExecution())
         {
             ParallelProcessVerifier procVerifier = (ParallelProcessVerifier) verifier;
-            ExperimentExecution exec = new ExperimentExecution(startDate, new Date(),
+            ExperimentExecution exec = new ExperimentExecution(-1, startDate, new Date(),
                 GenerateExperimentOutput(userId), procVerifier.getUsedMemoryPercentage()[0],
                 procVerifier.getCPUUsagePercentage()[0], procVerifier.getCPUTimeSeconds()[0]);
             //ToDo: Incluir estadísticas por nodo
@@ -67,7 +67,7 @@ public class ExperimentExecutor {
         else
         {
             ProcessVerifier procVerifier = (ProcessVerifier) verifier;
-            return new ExperimentExecution(startDate, new Date(),
+            return new ExperimentExecution(-1, startDate, new Date(),
                 GenerateExperimentOutput(userId), procVerifier.getUsedMemoryPercentage(),
                 procVerifier.getCPUUsagePercentage(), procVerifier.getCPUTimeSeconds());
         }
