@@ -26,7 +26,6 @@ public class Experiment extends ExperimentBase
     // -------------------------------------------------------------------------
     private Date creationDate;
     private ExecStatus status;
-    private LinkedList<ExperimentParameter> parameters;
     private FolderStructure internalStructure;
     private LinkedList<ExperimentExecution> executionHistory;
 
@@ -41,7 +40,6 @@ public class Experiment extends ExperimentBase
         this.creationDate = creationDate;
         this.status = status;
         this.internalStructure = internalStructure;
-        this.parameters = new LinkedList<ExperimentParameter>();
         this.executionHistory = new LinkedList<ExperimentExecution>();
     }
     /**
@@ -90,6 +88,20 @@ public class Experiment extends ExperimentBase
     public Date getCreationDate()
     {
         return creationDate;
+    }
+
+    public String getProccessedParameterLine()
+    {
+        String finalParameterLine = getInputParametersLine();
+        ExperimentParameter[] parameters = getParameters();
+        for(int parI = 0; parI < parameters.length; parI++)
+        {
+            ExperimentParameter par = parameters[parI];
+            String expression = "\\$\\(" + par.getName() + "\\)";
+            finalParameterLine = finalParameterLine.replaceAll(
+                    expression, par.getValue().toString());
+        }
+        return finalParameterLine;
     }
 
     /**

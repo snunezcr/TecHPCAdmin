@@ -28,7 +28,7 @@ public class ExperimentExecutor {
 
     private Experiment executedExperiment;
     private Process experimentProcess;
-    private ProcessVerifier verifier;
+    private Thread verifier;
     private Date startDate;
 
     // Constructor
@@ -55,9 +55,22 @@ public class ExperimentExecutor {
 
     public ExperimentExecution GenerateExperimentExecution(final int userId)
     {
-        return new ExperimentExecution(-1, startDate, new Date(),
-                GenerateExperimentOutput(userId), verifier.getUsedMemoryPercentage(),
-                verifier.getCPUUsagePercentage(), verifier.getCPUTimeSeconds());
+        if(executedExperiment.usesParallelExecution())
+        {
+            ParallelProcessVerifier procVerifier = (ParallelProcessVerifier) verifier;
+            ExperimentExecution exec = new ExperimentExecution(-1, startDate, new Date(),
+                GenerateExperimentOutput(userId), procVerifier.getUsedMemoryPercentage()[0],
+                procVerifier.getCPUUsagePercentage()[0], procVerifier.getCPUTimeSeconds()[0]);
+            //ToDo: Incluir estadísticas por nodo
+            return exec;
+        }
+        else
+        {
+            ProcessVerifier procVerifier = (ProcessVerifier) verifier;
+            return new ExperimentExecution(-1, startDate, new Date(),
+                GenerateExperimentOutput(userId), procVerifier.getUsedMemoryPercentage(),
+                procVerifier.getCPUUsagePercentage(), procVerifier.getCPUTimeSeconds());
+        }
     }
 
     private String GenerateExperimentOutput(final int userId)
@@ -113,22 +126,19 @@ public class ExperimentExecutor {
      */
     private void SaveInputToFile(final File file, final InputStream input) {
         try {
-            if (!file.exists()) {
+            if (!file.exists())
+            {
                 file.createNewFile();
                 FileWriter writer = new FileWriter(file);
                 byte[] inputBuffer = new byte[1024];
                 int readAmount;
-                int totalRead = 0;
                 while ((readAmount = input.read(inputBuffer)) > 0)
-                {
-                    writer.write(new String(inputBuffer), totalRead, readAmount);
-                    totalRead += readAmount;
-                }
+                    writer.write(new String(inputBuffer), 0, readAmount);
                 writer.flush();
                 writer.close();
             }
-        } catch (IOException ex) {
         }
+        catch (IOException ex) {}
     }
 
     // Instance methods
@@ -139,17 +149,50 @@ public class ExperimentExecutor {
      * @param userId User that is executing the experiment.
      * @return Indicates whether the experiment started successfully or not.
      */
-    public Boolean RunExperiment(Observable obs, int userId) {
+    public Boolean RunExperiment(Observable obs, final int userId) {
+        if (executedExperiment.usesParallelExecution())
+            return RunParallelExperiment(obs, userId);
+        else return RunNonParallelExperiment(obs, userId);
+    }
+
+    private Boolean RunNonParallelExperiment(Observable obs, final int userId)
+    {
         try {
             // Address of the executable file of the experiment.
             String execAddr = DirectoryManager.GetInstance().
                     GetPathForExperimentExecution(userId, executedExperiment.getId())
                     + executedExperiment.getExecutablePath()
-                    + " " + executedExperiment.getInputParametersLine();
+                    + " " + executedExperiment.getProccessedParameterLine();
             experimentProcess = Runtime.getRuntime().exec(execAddr);
             startDate = new Date();
             verifier = new ProcessVerifier(experimentProcess, obs,
                     new UserExperimentMapping(executedExperiment.getId(), userId));
+            verifier.start();
+            return true;
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    //ToDo: Es exactamente igual a correr un experimento NO paralelo
+    private boolean RunParallelExperiment(Observable obs, final int userId)
+    {
+        try
+        {
+            // Address of the executable file of the experiment.
+            //ToDo: Put the correct execution command
+            String execAddr = DirectoryManager.GetInstance().
+                    GetPathForExperimentExecution(userId, executedExperiment.getId())
+                    + executedExperiment.getExecutablePath()
+                    + " " + executedExperiment.getProccessedParameterLine();
+            experimentProcess = Runtime.getRuntime().exec(execAddr);
+            startDate = new Date();
+            //ToDo: Put the correct hosts
+            String[] hosts = {"localhost"};
+            verifier = new ParallelProcessVerifier(experimentProcess, obs,
+                    new UserExperimentMapping(executedExperiment.getId(), userId),
+                    hosts);
             verifier.start();
             return true;
         } catch (IOException e) {
