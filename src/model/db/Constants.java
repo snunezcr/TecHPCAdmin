@@ -176,4 +176,30 @@ public class Constants {
     public static final int SaveExecParamOutputFilePath = 6;
     public static final int SaveExecParamCPUUsage = 7;
 
+    // Save node statistics
+    // -------------------------------------------------------------------------
+    public static final String SaveNodeStatsSp = "SaveNodeStats";
+    public static final int SaveNodeStatsParamExecId = 1;
+    public static final int SaveNodeStatsParamNodeNumber = 2;
+    public static final int SaveNodeStatsParamCPUTime = 3;
+    public static final int SaveNodeStatsParamUsedMemory = 4;
+    public static final int SaveNodeStatsParamCPUUsage = 5;
+
+    // Change User permissions
+    // -------------------------------------------------------------------------
+    public static final String ChangePermissionsSp = "UpdateUserPermissions";
+    public static final int ChangePermissionsParamLogin = 1;
+    public static final int ChangePermissionsParamNewRole = 2;
+    public static final int ChangePermissionsParamDisable = 3;
+
+    // Update user personal info
+    // -------------------------------------------------------------------------
+    public static final String ChangeUserInfoSp = "UpdateUserPersonalInfo";
+    public static final int ChangeUserInfoParamLogin = 1;
+    public static final int ChangeUserInfoParamNewPassword = 2;
+    public static final int ChangeUserInfoParamName = 3;
+    public static final int ChangeUserInfoParamLastName1 = 4;
+    public static final int ChangeUserInfoParamLastName2 = 5;
+    public static final int ChangeUserInfoParamOldPassword = 6;
+
 }

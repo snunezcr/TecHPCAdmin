@@ -19,6 +19,7 @@ import model.ExperimentParameter;
 import model.ExperimentExecution;
 import model.FolderStructure;
 import model.NodeStatistics;
+import model.ParallelExpExecution;
 
 /**
  * This class do all the database operations related to experiments, it's an auxiliar class to
@@ -231,7 +232,45 @@ public class ExperimentDataManager {
                     new SqlParameter(Constants.SaveExecParamCPUUsage, exec.getCPUUsage()),
                 };
             ResultSet reader = dataHelper.ExecuteSP(Constants.SaveExecSp, parameters);
-            //TODO: Obtener el Id del reader
+            reader.next();
+            int resultValue = reader.getInt(1);
+            if (exec instanceof ParallelExpExecution)
+            {
+                NodeStatistics[] nodeStats = ((ParallelExpExecution) exec).getNodeStatistics();
+                for(int nodeI = 0; nodeI < nodeStats.length; nodeI++)
+                    SaveNodeStats(nodeStats[nodeI], resultValue);
+            }
+            dataHelper.CloseConnection(reader);
+            return resultValue;
+        }
+        catch(Exception ex)
+        {
+            return -1;
+        }
+    }
+
+    /**
+     * Saves the statistics of an experiment execution.
+     * @param expExec Information of the experiment execution to be saved
+     * @param expId Unique identifier of the experiment that was execute.
+     * @return Id of the execution in the data base.
+     */
+    public int SaveNodeStats(NodeStatistics nodeStats, int execId) throws SQLException
+    {
+        try
+        {
+            SqlParameter[] parameters = new SqlParameter[]{
+                    new SqlParameter(Constants.SaveNodeStatsParamExecId, execId),
+                    new SqlParameter(Constants.SaveNodeStatsParamCPUUsage,
+                            nodeStats.getCpuUsage()),
+                    new SqlParameter(Constants.SaveNodeStatsParamCPUTime,
+                            nodeStats.getTotalTime()),
+                    new SqlParameter(Constants.SaveNodeStatsParamNodeNumber,
+                            nodeStats.getNodeNumber()),
+                    new SqlParameter(Constants.SaveNodeStatsParamUsedMemory,
+                            nodeStats.getUsedMemory())
+                };
+            ResultSet reader = dataHelper.ExecuteSP(Constants.SaveNodeStatsSp, parameters);
             Integer resultValue = 0;
             dataHelper.CloseConnection(reader);
             return resultValue;

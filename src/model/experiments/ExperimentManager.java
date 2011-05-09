@@ -11,7 +11,6 @@ import experiments.db.ExperimentDataManager;
 import files.DirectoryManager;
 import files.io.FileIOManager;
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Observer;
 import java.util.Observable;
@@ -73,7 +72,7 @@ public class ExperimentManager implements Observer
                     ExperimentExecution execution = executor.GenerateExperimentExecution(
                             usrExpMap.getUserId());
                     int result = dataManager.SaveExperimentExecution(execution,
-                            finishedExperiment.getId());                    
+                            finishedExperiment.getId());
                     finishedExperiment.AddExecutionHistory(execution);
                 }
                 catch(Exception ex)

@@ -1,0 +1,32 @@
+﻿-- Function: updateuserpersonalinfo(text, text, text, text, text, text)
+
+-- DROP FUNCTION updateuserpersonalinfo(text, text, text, text, text, text);
+
+CREATE OR REPLACE FUNCTION updateuserpersonalinfo("login" text, "newPassword" text, "newName" text, "newLastName1" text, "newLastName2" text, "oldPassword" text)
+  RETURNS integer AS
+$BODY$
+DECLARE
+	userCount int;
+	userId int;
+BEGIN
+
+	SELECT COUNT("UserName") INTO userCount FROM "User" 
+	WHERE "UserName" = "login" AND "Password" = md5("oldPassword");
+	IF userCount = 1 THEN
+		UPDATE "User"
+		SET
+			"Password" = md5("newPassword"),
+			"Name" = "newName",
+			"LastName1" = "newLastName1",
+			"LastName2" = "newLastName2"
+		WHERE
+			"UserName" = "login";
+		return 0;
+	ELSE
+		return -1;
+	END IF;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION updateuserpersonalinfo(text, text, text, text, text, text) OWNER TO postgres;

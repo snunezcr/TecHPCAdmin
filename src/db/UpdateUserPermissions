@@ -1,0 +1,24 @@
+﻿CREATE OR REPLACE FUNCTION updateuserpermissions("login" text, "newRole" text, "disable" boolean)
+  RETURNS integer AS
+$BODY$
+DECLARE
+	userCount int;
+BEGIN
+
+	SELECT COUNT("UserName") INTO userCount FROM "User" WHERE "UserName" = "login";
+	IF userCount = 1 THEN
+		UPDATE "User"
+		SET
+			"Enabled" = NOT("disable"),
+			"RoleId" = (SELECT "RoleId" FROM "Role" WHERE "Role" = "newRole")
+		WHERE
+			"UserName" = "login";
+		return 0;
+	ELSE
+		return -1;
+	END IF;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION updateuserpermissions(text, text, boolean) OWNER TO postgres;

@@ -1,0 +1,26 @@
+﻿CREATE OR REPLACE FUNCTION SaveNodeStats("execId" integer, "nodeNumber" integer, "cpuTime" integer, "usedMemory" double precision, "cpuUsage" double precision)
+  RETURNS integer AS
+$BODY$
+DECLARE
+	nodeId int;
+BEGIN
+	INSERT INTO "NodeStatistics"(
+		"ExecutionId",
+		"NodeNumber",
+		"TotalTime",
+		"UsedMemory",
+		"CpuUsage")
+		
+	VALUES(
+		"execId", 
+		"nodeNumber", 
+		"cpuTime", 
+		"usedMemory", 
+		"cpuUsage");
+	SELECT MAX("NodeStatisticsId") INTO nodeId FROM "NodeStatistics" ;
+	RETURN nodeId;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION SaveNodeStats(integer, integer, integer, double precision, double precision) OWNER TO postgres;

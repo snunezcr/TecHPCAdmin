@@ -115,6 +115,35 @@ public class SecurityManager {
         }
     }
 
+    public ServiceResult<Boolean> UpdateUserPermissions
+            (String userName, String role, boolean toDisable)
+    {
+        ServiceResult<Boolean> result = new ServiceResult<Boolean>(
+                dataManager.UpdateUserPermissions(userName, role, toDisable));
+        if(!result.getValue())
+        {
+            String error = "Error: No se pudo cambiar los permisos del usuario.";
+            result.AddError(error);
+        }
+        return result;
+    }
+
+    public ServiceResult<Boolean> UpdateUserPersonalInfo
+            (String userName, String newPassword, String newName,
+            String newLastName1, String newLastName2, String oldPassword)
+    {
+        ServiceResult<Boolean> result = new ServiceResult<Boolean>(
+                dataManager.UpdateUserPersonalInfo(
+                        userName, newPassword, newName,
+                        newLastName1, newLastName2, oldPassword));
+        if(!result.getValue())
+        {
+            String error = "Error: No se pudo cambiar sus datos personales.";
+            result.AddError(error);
+        }
+        return result;
+    }
+
     private void CleanUserData(final int userId)
     {//TODO: Eliminar el registro de la BD
 

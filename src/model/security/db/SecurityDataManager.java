@@ -10,7 +10,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import model.User;
 import model.UserBase;
 
@@ -111,6 +110,50 @@ public class SecurityDataManager {
         }
         dataHelper.CloseConnection(reader);
         return result;
+    }
+
+    public Boolean UpdateUserPermissions
+            (String userName, String role, boolean toDisable)
+    {
+        try
+        {
+            SqlParameter[] parameters = new SqlParameter[]{
+                new SqlParameter(Constants.ChangePermissionsParamLogin, userName),
+                new SqlParameter(Constants.ChangePermissionsParamNewRole, role),
+                new SqlParameter(Constants.ChangePermissionsParamDisable, toDisable)
+            };
+            ResultSet reader = dataHelper.ExecuteSP(Constants.ChangePermissionsSp, parameters);
+            reader.next();
+            int result = reader.getInt(1);
+            dataHelper.CloseConnection(reader);
+            return result >= 0;
+        }
+        catch (Exception ex)
+        { return false; }
+    }
+
+    public Boolean UpdateUserPersonalInfo
+            (String userName, String newPassword, String newName,
+            String newLastName1, String newLastName2, String oldPassword)
+    {
+        try
+        {
+            SqlParameter[] parameters = new SqlParameter[]{
+                new SqlParameter(Constants.ChangeUserInfoParamLogin, userName),
+                new SqlParameter(Constants.ChangeUserInfoParamName, newName),
+                new SqlParameter(Constants.ChangeUserInfoParamNewPassword, newPassword),
+                new SqlParameter(Constants.ChangeUserInfoParamLastName1, newLastName1),
+                new SqlParameter(Constants.ChangeUserInfoParamLastName2, newLastName2),
+                new SqlParameter(Constants.ChangeUserInfoParamOldPassword, oldPassword)
+            };
+            ResultSet reader = dataHelper.ExecuteSP(Constants.ChangeUserInfoSp, parameters);
+            reader.next();
+            int result = reader.getInt(1);
+            dataHelper.CloseConnection(reader);
+            return result >= 0;
+        }
+        catch (Exception ex)
+        { return false; }
     }
 
 }

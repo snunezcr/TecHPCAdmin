@@ -79,7 +79,9 @@ public class ParallelStatisticsGenerator extends TimerTask
             String host = hosts[hostI];
             try
             {
-                String psCommand = "ssh " + host + " 'ps aux'";
+                //ToDo: Secure Shell para cada uno de los nodos
+                //String psCommand = "ssh " + host + " 'ps aux'";
+                String psCommand = "ps aux";
                 Process psAux = Runtime.getRuntime().exec(psCommand);
                 psAux.waitFor();
                 BufferedReader stdOutStream = new BufferedReader(new

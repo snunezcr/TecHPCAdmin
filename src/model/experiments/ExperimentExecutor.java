@@ -14,6 +14,8 @@ import java.util.Date;
 import java.util.Observable;
 import model.Experiment;
 import model.ExperimentExecution;
+import model.NodeStatistics;
+import model.ParallelExpExecution;
 import model.UserExperimentMapping;
 
 /**
@@ -58,10 +60,16 @@ public class ExperimentExecutor {
         if(executedExperiment.usesParallelExecution())
         {
             ParallelProcessVerifier procVerifier = (ParallelProcessVerifier) verifier;
-            ExperimentExecution exec = new ExperimentExecution(-1, startDate, new Date(),
+            NodeStatistics[] nodeStats = new NodeStatistics[procVerifier.getHosts().length];
+            for(int nodeI = 0; nodeI < nodeStats.length; nodeI++)
+                nodeStats[nodeI] = new NodeStatistics(
+                        nodeI, procVerifier.getCPUTimeSeconds()[nodeI],
+                        procVerifier.getUsedMemoryPercentage()[nodeI],
+                        procVerifier.getCPUUsagePercentage()[nodeI]);
+            ParallelExpExecution exec = new ParallelExpExecution(-1, startDate, new Date(),
                 GenerateExperimentOutput(userId), procVerifier.getUsedMemoryPercentage()[0],
-                procVerifier.getCPUUsagePercentage()[0], procVerifier.getCPUTimeSeconds()[0]);
-            //ToDo: Incluir estadísticas por nodo
+                procVerifier.getCPUUsagePercentage()[0], procVerifier.getCPUTimeSeconds()[0],
+                nodeStats);
             return exec;
         }
         else
@@ -81,8 +89,8 @@ public class ExperimentExecutor {
         String startTimeText = CommonFunctions.GetDateText(startDate);
         String outputDir = baseFilePathname + startTimeText;
         dirMan.CreateDirectory(outputDir);
-        GenerateStandardOutputFile(userId, outputDir);
-        GenerateErrorOutputFile(userId, outputDir);
+        GenerateStandardOutputFile(outputDir);
+        GenerateErrorOutputFile(outputDir);
         dirMan.CreateCompressedDir(startTimeText, baseFilePathname);
         dirMan.DeleteFile(outputDir);
         return startTimeText + ".tar.gz";
@@ -93,7 +101,7 @@ public class ExperimentExecutor {
      * @userId Id of the user that executed the experiment.
      * @return File in which the standard output was saved.
      */
-    private void GenerateStandardOutputFile(final int userId, String stdOutFilePathname)
+    private void GenerateStandardOutputFile(String stdOutFilePathname)
     {
         InputStream standardOutput = experimentProcess.getInputStream();
         String startTimeText = CommonFunctions.GetDateText(startDate);
@@ -108,7 +116,7 @@ public class ExperimentExecutor {
      * @userId Id of the user that executed the experiment.
      * @return File in which the standard output was saved.
      */
-    private void GenerateErrorOutputFile(final int userId, String errOutFilePathname)
+    private void GenerateErrorOutputFile(String errOutFilePathname)
     {
         InputStream errorOutput = experimentProcess.getInputStream();
         errOutFilePathname += "/Error - ";
@@ -164,12 +172,16 @@ public class ExperimentExecutor {
                     + executedExperiment.getExecutablePath()
                     + " " + executedExperiment.getProccessedParameterLine();
             experimentProcess = Runtime.getRuntime().exec(execAddr);
+            //ToDo: Jalar los hosts de algún lado
+            String[] hosts = {"localhost"};
             startDate = new Date();
-            verifier = new ProcessVerifier(experimentProcess, obs,
-                    new UserExperimentMapping(executedExperiment.getId(), userId));
+            verifier = new ParallelProcessVerifier(experimentProcess, obs,
+                    new UserExperimentMapping(executedExperiment.getId(), userId), hosts);
             verifier.start();
             return true;
-        } catch (IOException e) {
+        } 
+        catch (IOException e)
+        {
             System.out.println(e.getMessage());
             return false;
         }
