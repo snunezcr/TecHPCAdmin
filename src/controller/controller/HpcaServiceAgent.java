@@ -150,7 +150,7 @@ public class HpcaServiceAgent {
      * @param fileContent The binary content of the installer file
      * @return True if the program could be installed, otherwise false
      */
-    public ServiceResult<Boolean> InstallProgram(final HttpServletRequest request,
+    public ServiceResult<Integer> InstallProgram(final HttpServletRequest request,
             final String description, final String executable, final String folder,
             final String fileName, final byte[] fileContent)
     {
@@ -168,7 +168,7 @@ public class HpcaServiceAgent {
      * @param url The url of the repository
      * @return True if the program could be installed, otherwise false
      */
-    public ServiceResult<Boolean> InstallProgram(final HttpServletRequest request,
+    public ServiceResult<Integer> InstallProgram(final HttpServletRequest request,
             final String description, final String executable, final String folder,
             final String repository, final String url)
     {

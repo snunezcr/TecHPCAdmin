@@ -13,8 +13,6 @@ import files.DirectoryManager;
 import files.io.FileIOManager;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.HashMap;
 import model.Application;
 import model.ApplicationBase;
@@ -122,7 +120,7 @@ public class ApplicationManager {
      * @param fileContent The binary content of the installer file
      * @return True if the program could be installed, otherwise false
      */
-    public ServiceResult<Boolean> InstallProgram(final int userId, final String description,
+    public ServiceResult<Integer> InstallProgram(final int userId, final String description,
             final String executable, final String folder, final String fileName,
             final byte[] fileContent)
     {
@@ -140,14 +138,14 @@ public class ApplicationManager {
      * @param url The url of the server containing the code
      * @return True if the program could be installed, otherwise false
      */
-    public ServiceResult<Boolean> InstallProgram(final int userId, final String description,
+    public ServiceResult<Integer> InstallProgram(final int userId, final String description,
             final String executable, final String folder, final String repository, final String url)
     {
         return InstallProgram(userId, description, executable, folder, true, null, null, repository,
                 url);
     }
 
-    private ServiceResult<Boolean> InstallProgram(final int userId, final String description,
+    private ServiceResult<Integer> InstallProgram(final int userId, final String description,
             final String executable, final String folder, final boolean fromRepository,
             final String fileName, final byte[] fileContent, final String repository,
             final String url)
@@ -168,7 +166,11 @@ public class ApplicationManager {
 
             executeInstallation(codePath, applicationPath);
 
-            return new ServiceResult<Boolean>(true);
+            String appsPath = folder + "/" + executable;
+            ApplicationBase application = new ApplicationBase(description, appsPath);
+            int resultId = dataManager.CreateProgram(application, userId);
+
+            return new ServiceResult<Integer>(resultId);
         }
         catch(Exception ex)
         {
@@ -179,7 +181,7 @@ public class ApplicationManager {
     private void executeInstallation(final String path, final String applicationPath)
             throws Exception
     {
-        String installerPath = path ;//+ "installer/";
+        String installerPath = path + "installer/";
         if(!new File(installerPath).exists())
             throw new Exception("No se pudo encontrar el folder de instalacion.");
 
@@ -219,6 +221,7 @@ public class ApplicationManager {
                             SetFilePermissions(program, LinuxUtilities.Execution);
                 }
         }
+
     }
 
     private void installFromRepository(final String path, final String repository,

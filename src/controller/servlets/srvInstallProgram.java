@@ -8,6 +8,8 @@ package servlets;
 import common.ServiceResult;
 import controller.HpcaServiceAgent;
 import controller.MultipartRequest;
+import controller.RequestManager;
+import controller.SessionManager;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -39,7 +41,7 @@ public class srvInstallProgram extends HttpServlet {
         Boolean fromRepository = repositoryText.equalsIgnoreCase("repository");
 
         HpcaServiceAgent agent = new HpcaServiceAgent();
-        ServiceResult<Boolean> result = null;
+        ServiceResult<Integer> result = null;
         if(fromRepository)
         {
             String repositoryType = mrequest.getParameter("cmbRepository");
@@ -56,18 +58,13 @@ public class srvInstallProgram extends HttpServlet {
         }
 
         if(result.getStatus() == ServiceResult.OperationResult.Succeeded)
-        {
-            if(result.getValue())
-            {
-
-            }
-            else
-            {
-            }
+        {//The program was uploaded without errors
+            //Let's empty the cache
+            SessionManager.SetApplications(request, null);
+            response.sendRedirect(RequestManager.MyProgramsFullPage);
         }
-        else
-        {
-        }
+        else //An error occured, inform the user
+            RequestManager.SendProgramCreationError(request, response);
     } 
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
