@@ -60,6 +60,17 @@ public class CommonFunctions {
         return dir.list(fileFilter);
     }
 
+    public static String[] ListExecuableFiles(final String path)
+    {
+        File dir = new File(path);
+        FilenameFilter fileFilter = new FilenameFilter() {
+            public boolean accept(File file, String string) {
+                return file.canExecute();
+            }
+        };
+        return dir.list(fileFilter);
+    }
+
     public static String[] SearchFile(final String path, final String name)
     {
         File dir = new File(path);

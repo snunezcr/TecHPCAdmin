@@ -12,8 +12,9 @@ import common.ServiceResult;
 import files.DirectoryManager;
 import files.io.FileIOManager;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import model.Application;
 import model.ApplicationBase;
@@ -122,10 +123,12 @@ public class ApplicationManager {
      * @return True if the program could be installed, otherwise false
      */
     public ServiceResult<Boolean> InstallProgram(final int userId, final String description,
-            final String folder, final String fileName, final byte[] fileContent)
+            final String executable, final String folder, final String fileName,
+            final byte[] fileContent)
     {
         return
-            InstallProgram(userId, description, folder, false, fileName, fileContent, null, null);
+            InstallProgram(userId, description, executable, folder, false, fileName, fileContent,
+            null, null);
     }
 
     /**
@@ -138,14 +141,16 @@ public class ApplicationManager {
      * @return True if the program could be installed, otherwise false
      */
     public ServiceResult<Boolean> InstallProgram(final int userId, final String description,
-            final String folder, final String repository, final String url)
+            final String executable, final String folder, final String repository, final String url)
     {
-        return InstallProgram(userId, description, folder, true, null, null, repository, url);
+        return InstallProgram(userId, description, executable, folder, true, null, null, repository,
+                url);
     }
 
     private ServiceResult<Boolean> InstallProgram(final int userId, final String description,
-            final String folder, final boolean fromRepository, final String fileName,
-            final byte[] fileContent, final String repository, final String url)
+            final String executable, final String folder, final boolean fromRepository,
+            final String fileName, final byte[] fileContent, final String repository,
+            final String url)
     {
         try
         {
@@ -153,7 +158,6 @@ public class ApplicationManager {
             DirectoryManager dirManager = DirectoryManager.GetInstance();
             String applicationPath = dirManager.GetApplicationsPath(userId) + folder + "/";
             String codePath = dirManager.GetCodePath(userId) + folder + "/";
-            String installerPath = codePath + "installer/";
             dirManager.CreateDirectory(applicationPath);
             dirManager.CreateDirectory(codePath);
 
@@ -162,7 +166,7 @@ public class ApplicationManager {
             else
                 installFromCompressedFile(codePath, fileName, fileContent);
 
-            executeInstallation(installerPath);
+            executeInstallation(codePath, applicationPath);
 
             return new ServiceResult<Boolean>(true);
         }
@@ -172,29 +176,49 @@ public class ApplicationManager {
         }
     }
 
-    private void executeInstallation(final String path) throws Exception
+    private void executeInstallation(final String path, final String applicationPath)
+            throws Exception
     {
-        if(!new File(path).exists())
+        String installerPath = path ;//+ "installer/";
+        if(!new File(installerPath).exists())
             throw new Exception("No se pudo encontrar el folder de instalacion.");
 
         //We have to look for *.ac files
-        String[] files = CommonFunctions.ListExtensionFiles(path, ".ac");
+        boolean runConfigure = CommonFunctions.ListExtensionFiles(installerPath, ".ac").length > 0;
         Process process = null;
-        if(files.length > 0)
-            process = Runtime.getRuntime().exec(path + "configure");//Let's run configure
-        else
-        {//Let's run make
-            String[] makefile = CommonFunctions.SearchFile(path, "makefile");
-            if(makefile.length > 0)
-            {
-                process = Runtime.getRuntime().exec("make -C " + path);
-                process.waitFor();
-                process = Runtime.getRuntime().exec("make install -C " + path);
-            }
-            else
-                throw new Exception("No se pudo encontrar el archivo de make.");
+        if(runConfigure)
+        {
+            String configCommand = installerPath + "configure --bindir=" + applicationPath;
+            process = Runtime.getRuntime().exec(configCommand);//Let's run configure
+            process.waitFor();
         }
-        process.waitFor();
+        //Let's run make
+        String[] makefile = CommonFunctions.SearchFile(installerPath, "makefile");
+        if(makefile.length > 0)
+        {
+            process = Runtime.getRuntime().exec("make -C " + installerPath);
+            process.waitFor();
+            process = Runtime.getRuntime().exec("make install -C " + installerPath);
+            process.waitFor();
+        }
+        else
+            throw new Exception("No se pudo encontrar el archivo de make.");
+        if(!runConfigure)
+        {//If there was no config files we have to copy all the executable files by ourselves
+            String binPath = path + "bin/";
+            if(!new File(binPath).exists())
+                binPath = path;
+            String[] executables = CommonFunctions.ListExecuableFiles(binPath);
+            if(executables.length > 0)
+                for(String file : executables)
+                {
+                    FileIOManager ioManager = FileIOManager.GetInstance();
+                    String program = applicationPath + file;
+                    ioManager.CopyFile(binPath + file, program);
+                    LinuxUtilities.GetInstance().
+                            SetFilePermissions(program, LinuxUtilities.Execution);
+                }
+        }
     }
 
     private void installFromRepository(final String path, final String repository,
@@ -203,10 +227,6 @@ public class ApplicationManager {
         String command = "";
         if(repository.equals("gitHub"))
             command = "git clone " + url + " " + path;
-        else if(repository.equals("CVS"))
-        {
-            //TODO: Completar
-        }
         else
             command = "svn co " + url + " " + path;
         Process process = Runtime.getRuntime().exec(command);

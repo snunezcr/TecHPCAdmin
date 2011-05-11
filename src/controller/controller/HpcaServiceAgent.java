@@ -151,12 +151,12 @@ public class HpcaServiceAgent {
      * @return True if the program could be installed, otherwise false
      */
     public ServiceResult<Boolean> InstallProgram(final HttpServletRequest request,
-            final String description, final String folder, final String fileName,
-            final byte[] fileContent)
+            final String description, final String executable, final String folder,
+            final String fileName, final byte[] fileContent)
     {
         int userId = SessionManager.GetUserId(request);
         return ApplicationManager.GetInstance()
-                .InstallProgram(userId, description, folder, fileName, fileContent);
+                .InstallProgram(userId, description, executable, folder, fileName, fileContent);
     }
 
     /**
@@ -169,12 +169,12 @@ public class HpcaServiceAgent {
      * @return True if the program could be installed, otherwise false
      */
     public ServiceResult<Boolean> InstallProgram(final HttpServletRequest request,
-            final String description, final String folder, final String repository,
-            final String url)
+            final String description, final String executable, final String folder,
+            final String repository, final String url)
     {
         int userId = SessionManager.GetUserId(request);
         return ApplicationManager.GetInstance()
-                .InstallProgram(userId, description, folder, repository, url);
+                .InstallProgram(userId, description, executable, folder, repository, url);
     }
 
     // Experiment methods
