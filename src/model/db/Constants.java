@@ -196,10 +196,10 @@ public class Constants {
     // -------------------------------------------------------------------------
     public static final String ChangeUserInfoSp = "UpdateUserPersonalInfo";
     public static final int ChangeUserInfoParamLogin = 1;
-    public static final int ChangeUserInfoParamNewPassword = 2;
-    public static final int ChangeUserInfoParamName = 3;
-    public static final int ChangeUserInfoParamLastName1 = 4;
-    public static final int ChangeUserInfoParamLastName2 = 5;
-    public static final int ChangeUserInfoParamOldPassword = 6;
+    public static final int ChangeUserInfoParamName = 2;
+    public static final int ChangeUserInfoParamLastName1 = 3;
+    public static final int ChangeUserInfoParamLastName2 = 4;
+    public static final int ChangeUserInfoParamRole = 5;
+    public static final int ChangeUserInfoParamEnabled = 6;
 
 }

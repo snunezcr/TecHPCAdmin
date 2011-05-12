@@ -48,6 +48,11 @@ public class HpcaServiceAgent {
         return SecurityManager.GetInstance().Login(userName, password);
     }
 
+    public ServiceResult<Boolean> UpdateUserPersonalInfo(final UserBase newData,
+                                  final boolean newEnabled)
+    {
+        return SecurityManager.GetInstance().UpdateUserPersonalInfo(newData, newEnabled);
+    }
     /**
      * Creates a new user
      * @param newUser The users data that will be saved

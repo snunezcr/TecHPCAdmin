@@ -132,28 +132,19 @@ public class SecurityDataManager {
         { return false; }
     }
 
-    public Boolean UpdateUserPersonalInfo
-            (String userName, String newPassword, String newName,
-            String newLastName1, String newLastName2, String oldPassword)
+    public void UpdateUserPersonalInfo(final UserBase newData, final boolean newEnabled)
+            throws SQLException
     {
-        try
-        {
-            SqlParameter[] parameters = new SqlParameter[]{
-                new SqlParameter(Constants.ChangeUserInfoParamLogin, userName),
-                new SqlParameter(Constants.ChangeUserInfoParamName, newName),
-                new SqlParameter(Constants.ChangeUserInfoParamNewPassword, newPassword),
-                new SqlParameter(Constants.ChangeUserInfoParamLastName1, newLastName1),
-                new SqlParameter(Constants.ChangeUserInfoParamLastName2, newLastName2),
-                new SqlParameter(Constants.ChangeUserInfoParamOldPassword, oldPassword)
-            };
-            ResultSet reader = dataHelper.ExecuteSP(Constants.ChangeUserInfoSp, parameters);
-            reader.next();
-            int result = reader.getInt(1);
-            dataHelper.CloseConnection(reader);
-            return result >= 0;
-        }
-        catch (Exception ex)
-        { return false; }
+        SqlParameter[] parameters = new SqlParameter[]{
+            new SqlParameter(Constants.ChangeUserInfoParamLogin, newData.getUserName()),
+            new SqlParameter(Constants.ChangeUserInfoParamName, newData.getName()),
+            new SqlParameter(Constants.ChangeUserInfoParamEnabled, newEnabled),
+            new SqlParameter(Constants.ChangeUserInfoParamLastName1, newData.getLastName1()),
+            new SqlParameter(Constants.ChangeUserInfoParamLastName2, newData.getLastName2()),
+            new SqlParameter(Constants.ChangeUserInfoParamRole, newData.getType())
+        };
+        dataHelper.ExecuteNoResultsetSP(Constants.ChangeUserInfoSp, parameters);
+        dataHelper.CloseConnection();
     }
 
 }

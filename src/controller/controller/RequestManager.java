@@ -35,6 +35,7 @@ public class RequestManager {
         ExperimentCreationError,
         ProgramCreationError,
         UserCreationError,
+        UserEditionError,
         LoginExists
     }
 
@@ -86,6 +87,9 @@ public class RequestManager {
     private static final String userCreationError = "Se produjo un error al intentar "
             + "crear el usuario.<br />Por favor contacte al administrador del sitio.";
 
+    private static final String userEditionError = "Se produjo un error al intentar  modificar los "
+            + "datos del usuario.<br />Por favor contacte al administrador del sitio.";
+
     private static final String programUploadError = "Se produjo un error al intentar "
             + "subir el programa.";
 
@@ -136,6 +140,7 @@ public class RequestManager {
             case LoginServerError: return loginServerErrorMessage;
             case ExperimentCreationError: return experimentCreationError;
             case UserCreationError: return userCreationError;
+            case UserEditionError: return userEditionError;
             case LoginExists: return loginExistsError;
             case ProgramCreationError: return programUploadError;
             default: return "";
@@ -170,6 +175,12 @@ public class RequestManager {
             final HttpServletResponse response) throws ServletException, IOException
     {
         sendError(request, response, AllUsersPage, ErrorCodes.UserCreationError);
+    }
+
+    public static void SendUserEditionError(final HttpServletRequest request,
+            final HttpServletResponse response) throws ServletException, IOException
+    {
+        sendError(request, response, AllUsersPage, ErrorCodes.UserEditionError);
     }
 
     public static void SendLoginExistsError(final HttpServletRequest request,

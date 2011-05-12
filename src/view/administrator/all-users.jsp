@@ -31,6 +31,7 @@
                     "<td>" + user.getType() + "</td>" +
                     "<td>" + user.getCreationDate() + "</td>" +
                     "<td>" + (user.isEnabled() ? "Si" : "No") + "</td>" +
+                    "<td><a href='edit-user.jsp?id=" + Integer.toString(user.getUserId()) + "'>Editar</a></td>" +
                     "</tr>";
         }
     }
@@ -57,6 +58,7 @@
                 <td>Rol</td>
                 <td>Fecha de creación</td>
                 <td>Habilitado</td>
+                <td>Editar</td>
             </tr>
             <%= usersHtml %>
         </table>

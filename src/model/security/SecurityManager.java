@@ -128,20 +128,18 @@ public class SecurityManager {
         return result;
     }
 
-    public ServiceResult<Boolean> UpdateUserPersonalInfo
-            (String userName, String newPassword, String newName,
-            String newLastName1, String newLastName2, String oldPassword)
+    public ServiceResult<Boolean> UpdateUserPersonalInfo(final UserBase newData,
+                                  final boolean newEnabled)
     {
-        ServiceResult<Boolean> result = new ServiceResult<Boolean>(
-                dataManager.UpdateUserPersonalInfo(
-                        userName, newPassword, newName,
-                        newLastName1, newLastName2, oldPassword));
-        if(!result.getValue())
+        try
         {
-            String error = "Error: No se pudo cambiar sus datos personales.";
-            result.AddError(error);
+            dataManager.UpdateUserPersonalInfo(newData, newEnabled);
+            return new ServiceResult<Boolean>(true);
         }
-        return result;
+        catch(Exception ex)
+        {
+            return CommonFunctions.CreateErrorServiceResult(ex);
+        }
     }
 
     private void CleanUserData(final int userId)
