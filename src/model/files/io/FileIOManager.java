@@ -105,4 +105,19 @@ public class FileIOManager {
         }
     }
 
+    public void RemoveDirectory(File file)
+    {
+        try
+        {
+            if (file.exists() && file.isDirectory())
+            {
+                String[] children = file.list();
+                for (String child : children)
+                    RemoveDirectory(new File(file, child));
+            }
+            file.delete();
+        }
+        catch(Exception ex) { }
+    }
+
 }

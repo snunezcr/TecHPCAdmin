@@ -79,34 +79,51 @@ public class ApplicationManager {
                                                 final int ownerId, final byte[] inputFile)
     {
         int applicationId = -1;
+        boolean removeDir = true;
         try
         {
             //Let's check if the file is empty
             if(inputFile.length == 0)
                 throw new Exception("El archivo estaba vacío.");
 
-            //We're going to store the applications metadata in the db
-            int resultId = dataManager.CreateProgram(application, ownerId);
-
             DirectoryManager dirManager = DirectoryManager.GetInstance();
             String path = dirManager.GetApplicationsPath(ownerId);
             FileIOManager ioManager = FileIOManager.GetInstance();
             String inputFileName = application.getRelativePath();
             String dir = inputFileName.substring(0, inputFileName.lastIndexOf('/'));
+            if(new File(dir).exists())
+            {
+                removeDir = false;
+                throw new Exception("Ya existe el directorio");
+            }
+
+            //We're going to store the applications metadata in the db
+            applicationId = dataManager.CreateProgram(application, ownerId);
 
             //Now let's upload the file
             boolean result = DirectoryManager.GetInstance().CreateDirectory(path + dir);
             result &= ioManager.CreateNewFile(inputFile, path, inputFileName, true);
             if(!result)
                 throw new Exception("No se pudo subir el ejecutable.");
-            return new ServiceResult<Integer>(resultId);
+            return new ServiceResult<Integer>(applicationId);
         }
         catch(Exception ex)
         {
-            if(applicationId != -1)
-            {//If we didn't write to the db, then there's nothing to rollback
-                //TODO: Eliminar el registro de la BD y el directorio
+            try
+            {
+                if(applicationId != -1)
+                    //If we didn't write to the db, then there's nothing to rollback
+                    dataManager.RemoveApplication(applicationId);
+
+                if(removeDir)
+                {//If the dir was previously there we shouldn't remove it
+                    String path = DirectoryManager.GetInstance().GetApplicationsPath(ownerId);
+                    String inputFileName = application.getRelativePath();
+                    String dir = inputFileName.substring(0, inputFileName.lastIndexOf('/'));
+                    FileIOManager.GetInstance().RemoveDirectory(new File(path + dir));
+                }
             }
+            catch(Exception ex2) { }
             return CommonFunctions.CreateErrorServiceResult(ex);
         }
     }

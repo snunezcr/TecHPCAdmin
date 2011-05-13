@@ -82,4 +82,15 @@ public class ApplicationDataManager {
         return result;
     }
 
+    public void RemoveApplication(final int id)
+    {
+        try
+        {
+            SqlParameter[] parameters = new SqlParameter[]{
+                new SqlParameter(Constants.RemoveAppParamId, id) };
+            dataHelper.ExecuteNoResultsetSP(Constants.RemoveAppSp, parameters);
+        }
+        catch(Exception ex) { }
+    }
+
 }

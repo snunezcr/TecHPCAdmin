@@ -67,6 +67,11 @@ public class Constants {
     public static final String UserAppsColUpdateDate = "UpdateDate";
     public static final String UserAppsColRelativePath = "RelativePath";
 
+    // Remove an application
+    // -------------------------------------------------------------------------
+    public static final String RemoveAppSp = "RemoveApplication";
+    public static final int RemoveAppParamId = 1;
+
     // Create new program
     // -------------------------------------------------------------------------
     public static final String NewProgramSp = "CreateProgram";
