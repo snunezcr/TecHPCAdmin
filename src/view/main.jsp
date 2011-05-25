@@ -56,6 +56,7 @@
                         <li><a href="#" onclick="redirect('normal/new-experiment.jsp')">Configurar nuevo experimento</a></li>
                         <li><a href="#" onclick="redirect('normal/upload-program.jsp')">Subir ejecutable</a></li>
                         <li><a href="#" onclick="redirect('normal/install-program.jsp')">Instalar programa</a></li>
+                        <li><a href="#" onclick="redirect('ManualUsuario.htm')">Manual de usuario</a></li>
                     </ul>
                     <%= adminMenu %>
                 </td>

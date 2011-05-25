@@ -112,4 +112,9 @@ public class Experiment extends ExperimentBase
         this.status = status;
     }
 
+    public void clearExecutions()
+    {
+        this.executionHistory.clear();
+    }
+
 }

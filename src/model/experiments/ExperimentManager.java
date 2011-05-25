@@ -12,6 +12,7 @@ import files.DirectoryManager;
 import files.io.FileIOManager;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Observer;
 import java.util.Observable;
 import model.ExperimentBase;
@@ -69,14 +70,19 @@ public class ExperimentManager implements Observer
                 finishedExperiment.setExecutionStatus(Experiment.ExecStatus.Stopped);
                 try
                 {
+                    int expId = finishedExperiment.getId();
                     ExperimentExecution execution = executor.GenerateExperimentExecution(
                             usrExpMap.getUserId());
-                    int result = dataManager.SaveExperimentExecution(execution,
-                            finishedExperiment.getId());
-                    finishedExperiment.AddExecutionHistory(execution);
+                    int result = dataManager.SaveExperimentExecution(execution, expId);
+                    Iterator<ExperimentExecution> execIte =
+                            dataManager.GetExperimentExecs(expId).values().iterator();
+                    finishedExperiment.clearExecutions();
+                    while(execIte.hasNext())
+                        finishedExperiment.AddExecutionHistory(execIte.next());
                 }
                 catch(Exception ex)
                 {
+                    ex.printStackTrace();
                 }
                 executor.StopExperiment();
                 userHash.remove(usrExpMap.getExpId());

@@ -273,7 +273,7 @@ public class RequestManager {
                     + Integer.toString(execution.getCPUTimeSeconds());
             length += addContent(pageOutput, tempString);
 
-            tempString = "Memoria utilizada : " + Float.toString(execution.getUsedMemory()) + "MB";
+            tempString = "Memoria utilizada : " + Float.toString(execution.getUsedMemory()) + "%";
             length += addContent(pageOutput, tempString);
 
             tempString = "Uso del CPU : " + Float.toString(execution.getCPUUsage()) + "%";
@@ -297,7 +297,7 @@ public class RequestManager {
                     length += addContent(pageOutput, tempString);
 
                     tempString = "Memoria utilizada : "
-                            + Float.toString(node.getUsedMemory()) + "MB";
+                            + Float.toString(node.getUsedMemory()) + "%";
                     length += addContent(pageOutput, tempString);
 
                     tempString = "Uso del CPU : " 
