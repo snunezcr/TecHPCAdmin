@@ -172,11 +172,9 @@ public class ExperimentExecutor {
                     + executedExperiment.getExecutablePath()
                     + " " + executedExperiment.getProccessedParameterLine();
             experimentProcess = Runtime.getRuntime().exec(execAddr);
-            //ToDo: Jalar los hosts de algún lado
-            String[] hosts = {"localhost"};
             startDate = new Date();
-            verifier = new ParallelProcessVerifier(experimentProcess, obs,
-                    new UserExperimentMapping(executedExperiment.getId(), userId), hosts);
+            verifier = new ProcessVerifier(experimentProcess, obs,
+                    new UserExperimentMapping(executedExperiment.getId(), userId));
             verifier.start();
             return true;
         } 
