@@ -168,6 +168,26 @@
                 var result = hasText('txtNewParam') && hasText('txtNewValue');
                 if(!result)
                     alert("<%= Constants.IncompleteParamErrorMessage %>");
+                else
+                {
+                    var type = document.getElementById('cmbNewType').value;
+                    var value = document.getElementById('txtNewValue').value;
+                    if(type == 'char' && value.length != 1)
+                            result = false;
+                    else if(type == 'int')
+                    {
+                        var intValue = parseInt(value);
+                        var floatVal = parseFloat(value);
+                        result = !isNaN(intValue) && floatVal == intValue;
+                    }
+                    else if(type == 'float')
+                    {
+                        var floatValue = parseFloat(value);
+                        result = !isNaN(floatValue);
+                    }
+                    if(!result)
+                        alert("El valor del parámetro es inválido.");
+                }
                 return result;
             }
 
