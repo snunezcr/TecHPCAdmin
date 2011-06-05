@@ -32,12 +32,25 @@
             experimentHtml += "<tr>" +
                     "<td>" + exp.getName() + "</td>" +
                     "<td>" + exp.getDescription() + "</td>" +
-                    "<td>" + exp.getExecutablePath() + "</td>" +
-                    "<td align='center'><a href='Resultados.rar'>Descargar resultados</a></td>" +
-                    "<td align='center'><a href='ExperimentStatistics.htm'>Ver estad&iacute;sticas</a></td>" +
-                    "<td align='center'><a href='" + Constants.ExperimentDetailsPage + "?" +
-                    Constants.ExperimentId + "=" + Integer.toString(exp.getId()) +
-                    "'>Ver detalles</a></td></tr>";
+                    "<td>" + exp.getExecutablePath() + "</td>";
+            String expId = Integer.toString(exp.getId());
+            ExperimentExecution[] execs = exp.getExecutionHistory();
+            if(execs.length > 0)
+            {
+
+                ExperimentExecution exec = execs[0];
+                experimentHtml += "<td align='center'><a href='download-log.jsp?" + Constants.ExperimentId + "=" + expId + "&file=" + exec.getOutputPath() + "' "
+                            + "target='_blank'>Resultados</a></td>"
+                            + "<td align='center'><a href='download-stats.jsp?" + Constants.ExperimentId + "=" + expId + "&exec=" + exec.getExecutionId() + "' "
+                            + "target='_blank'>Estad&iacute;sticas</a></td>";
+            }
+            else
+            {
+                experimentHtml += "<td align='center'>No hay resultados</td>" +
+                "<td align='center'>No hay estad&iacute;sticas</td>";
+            }
+            experimentHtml += "<td align='center'><a href='" + Constants.ExperimentDetailsPage + "?" +
+                Constants.ExperimentId + "=" + expId + "'>Ver detalles</a></td></tr>";
         }
     }
 
