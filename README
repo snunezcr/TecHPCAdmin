@@ -1,0 +1,70 @@
+Introducción
+La intención del presente documento es servir como una guía rápida para los encargados de extender y mantener la funcionalidad del sistema HPC Administration. Aquí encontrarán algunos detalles no intuitivos, asuntos pendientes, herramientas de trabajo y problemas enfrentados durante la resolución del proyecto.
+
+Herramientas utilizadas
+El proyecto fue desarrollado en Linux Ubuntu 10.04, NetBeans 6.9 y PostgreSQL, utilizando el pgAdmin 1.12.2.
+Antes de instalar NetBeans fue necesario instalar el JDK (sudo apt-get install openjdk-6-jdk).
+NetBeans se obtuvo desde la dirección http://dlc.sun.com.edgesuite.net/netbeans/6.9/rc/bundles/netbeans-6.9rc2-ml-java-linux.sh. Durante la instalación se agregó Tomcat para utilizarlo como webserver.
+PostgreSQL se obtuvo desde http://www.enterprisedb.com/products-services-training/pgdownload. También se instaló el unixodbc (se usó el Synaptic Manager con dicho fin).
+También se instaló el cliente de Postgre (sudo apt-get install postgresql-client-common y también postgresql-client-8.4 desde el Synaptic Manager).
+Para facilitar el manejo del repositorio de gitHub se utilizó el Cola Git Gui.
+
+Puntos pendientes
+- La ejecución en paralelo no fue implementada. ***REVISAR Y PONER CON MÁS DETALLE
+- En el momento de crear un experimento, se debe tener un procedimiento que haga rollback en caso de que el proceso falle (Hay ToDo's en el código).
+- En el momento de crear un usuario, se debe tener un procedimiento que haga rollback en caso de que el proceso falle (Hay un ToDo en el código).
+- La obtención de estadísticas debe utilizar Secure Shell para conectarse a cada uno de los nodos.
+- Leer el archivo de hosts para obtener los nodos del clúster.
+- Validar que los parámetros sean del tipo correcto a la hora de crear experimentos.
+- Cuando se instala un programa, si ya existe una carpeta con el mismo nombre de la carpeta de destino, debería preguntar al usuario que acción se quiere realizar.
+
+Opciones de mejora
+- Cambiar la estructura de directorios del proyecto de NetBeans para que se adapte a los directorios del repositorio de github.
+- Leer los credenciales para autenticarse en el servidor de postgres desde el archivo de configuración.
+- Crear un webservice como capa intermedia entre la capa de aplicación y la lógica.
+- Agregar un proceso de log para los errores del sistema.
+- Crear un módulo que permita el uso de roles.
+- Buscar una manera de evitar que un script de instalación de un usuario pudiera alterar archivos de otro usuario (El problema es que se usa un solo usuario a nivel de sistema operativo).
+
+Problemas encontrados
+Restauración de un backup de base de datos:
+- Se debe crear una BD llamada HPCA desde el pgAdmin.
+- Desde consola ejecutar sudo -i -u postgres (si "postgres" es el usuario para acceder a la BD, este es el usuario por defecto).
+- Irse en la terminal hasta donde esta el archivo de respaldo.
+- Ejecutar psql HPCA < NOMBRE_DE_ARCHIVO.EXTENSION
+Mapeo de la estructura de directorios de NetBeans a la estructura utilizada en el repositorio:
+- Los archivos que se mencionan a continuación deben ser modificados para que el directorio origen y destino correspondan con los que se estén usando en el ambiente de desarrollo.
+- Dependiendo de los cambios a la estructura de directorios (agregar, renombrar o eliminar directorios) puede que se deban modificar estos archivos.
+- Para copiar los archivos de código fuente desde la estructura de NetBeans hacia la estructura de directorios del repositorio gitHub se utilizó el archivo copySrcNoDB.sh en la carpeta config de la raíz
+- Para copiar los archivos de código fuente y desde la estructura de NetBeans hacia la estructura de directorios del repositorio gitHub, y copiar a la estructura de gitHub un respaldo de la BD se utilizó el archivo en la carpeta config de la raíz
+- Para copiar los archivos de código fuente desde la estructura de directorios del repositorio gitHub hacia la estructura de NetBeans se utilizó el archivo updateSh.sh en la carpeta config de la raíz
+Otros problemas
+- El servidor de postgre no permitía autenticarse en algunas ocasiones después de restaurar el estado de la VM de desarrollo. No se pudo encontrar el origen del problema, pero podía arreglarse reiniciando la máquina.
+
+Algunos detalles del sistema
+- El sistema supone que existe un archivo llamado hpca.conf en la ruta /etc/hpca/, se adjunta un ejemplo de dicho archivo en la carpeta config de la raíz.
+- El sistema supone que existe una ruta base en la cual se almacenarán los archivos de todos los usuarios. El sistema debe tener los permisos necesarios para leer, escribir y eliminar en dicha carpeta. La estructura de directorios es como sigue:
+
+DirectorioBase
+	-IdUsuario1
+		-bin
+		-data
+		-experiments
+	-IdUsuario2
+		-bin
+		-data
+		-experiments
+	-IdUsuarioX
+		-bin
+		-data
+		-experiments
+
+Dentro de la carpeta bin y la carpeta data habrá un directorio para cada programa instalado, además en la carpeta bin habrá un directorio para cada programa que haya sido subido al sistema. En la carpeta experiments habrá una carpeta por cada experimento creado, y dentro de la carpeta de cada experimento estará una carpeta con el ejecutable, dicha carpeta será copiada directamente desde la carpeta bin del usuario.
+- A la hora de instalar un programa, sea un archivo comprimido o código desde un repositorio, el sistema realizará las siguientes validaciones:
+* En la carpeta "raíz" donde quedaron los archivos descomprimidos o bajados, debe existir un folder llamado installer.
+* Si hay archivos con extensión "ac" se ejecutará un comando configure.
+* Debe existir un archivo de makefile, y se ejecuta un comando make.
+* Si no habían archivos con extensión "ac", se busca una carpeta bin en la "raíz" y se supone que todo su contenido es lo que se debe copiar a la carpeta bin del usuario. Si no hay una carpeta bin, se copian todos los archivos ejecutables que hayan quedado en la "raíz".
+
+Recomendaciones
+- Tener respaldos del repositorio y el proyecto de NetBeans, pues debido a que se tenían que copiar los archivos desde la estructura de NetBeans a la estructura del repositorio para hacer "commit" y "update", podían perderse cambios si el proceso no se realiza con cuidado.
